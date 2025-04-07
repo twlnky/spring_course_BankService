@@ -1,0 +1,27 @@
+http://127.0.0.1:8080/users/10?showCretentials=true
+
+
+OSI - TCP/IP
+
+HTTP
+1. sync - TCP
+2. body -
+3. header -> content-type: application/jpg|json|xml|pdf
+4. request param
+5. url
+6. METHODS -> GET, POST, PATCH,PUT, DELETE, OPTIONS, HEAD
+
+
+
+cors -> cross origin resource sharing policy
+
+
+
+1 - http , ftp ,
+4 - Transport - TCP/UDP  - Transfer Control Protocol / User Datagram Protocol - PORT
+5 - Network - ip 127.0.0.1 196.168.0.1 200.198.67.45, icmp, DHCP, NAT
+6 - Канальный - эзернет Bluetooth
+7 - Физический уровень
+
+6 - QoS
+
