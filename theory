@@ -25,3 +25,23 @@ cors -> cross origin resource sharing policy
 
 6 - QoS
 
+
+Spring Data
+EntityManagerFactory -> EntityManager -> Transaction
+
+Hibernate
+SessionFactory -> Session -> Transaction
+
+ACID
+
+Atomic транзакция выполняется полностью или не выполняется вовсе
+Consistency - согласованность данных
+Isolation -
+4 level
+DIRTY_READ = READ_UNCOMMITED
+UNREPEATABLE_READ
+FANTOM_READ
+
+CQRS -> Command Query Responsibility Segregation
+
+Durability

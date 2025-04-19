@@ -1,0 +1,15 @@
+package rut.miit.tech.web.service.atm;
+
+import rut.miit.tech.web.domain.model.Atm;
+import rut.miit.tech.web.service.util.FilterUnit;
+import rut.miit.tech.web.service.util.PageResult;
+import rut.miit.tech.web.service.util.SortUnit;
+import java.util.List;
+
+public interface AtmService {
+    Atm getById(Long id);
+    PageResult<List<Atm>> getAll(int page, int pageSize, List<FilterUnit> filters, SortUnit sort);
+    Atm create(Atm card);
+    Atm update(Atm card);
+    void delete(Long id);
+}
