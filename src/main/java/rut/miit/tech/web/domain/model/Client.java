@@ -3,6 +3,7 @@ package rut.miit.tech.web.domain.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -39,7 +40,10 @@ public class Client {
     private String phone;
 
     @Column(name = "birth_date", nullable = false)
-    private Date birthDate;
+    private Timestamp birthDate;
+
+    @Column(nullable = false)
+    private boolean isEnable;
 
     @ManyToOne
     @JoinColumn(name = "bank_code", nullable = false)

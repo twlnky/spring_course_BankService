@@ -2,11 +2,10 @@ package rut.miit.tech.web.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import rut.miit.tech.web.domain.model.Atm;
-import rut.miit.tech.web.domain.model.Bank;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface AtmRepository extends JpaRepository<Atm, Long> {
-    List<Atm> findByAtmCode(String accountCode);
+    Optional<Atm> findByCode(String accountCode);
 
 }

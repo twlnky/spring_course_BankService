@@ -45,3 +45,22 @@ FANTOM_READ
 CQRS -> Command Query Responsibility Segregation
 
 Durability
+
+
+
+
+
+
+UserDetails
+UserDetailsService
+
+Authentication
+AuthenticationProvider
+AuthenticationManager
+
+
+
+
+
+
+

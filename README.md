@@ -118,43 +118,133 @@ erDiagram
     SUPPORT_TICKET ||--o{ MESSAGE : "содержит"
 
 
-
----
-
-## Реляционная алгебра
-
-### CRUD-операции
-```relational-algebra
--- 1. Поиск клиентов и сотрудников банка
-π full_name(σ bank_code='B-001'(Client)) 
-∪ 
-π full_name (σ bank_code='B-001'(Employee))
-
--- 2. Добавление нового банка
-Bank ← Bank ∪ {
-    ('B-100', 'New Bank', '2023-10-01', 
-    'info@newbank.com', 'Moscow', '+79990000000')
-}
-
-``` 
+```
 # CRUD-запросы
 
-## Create (C)
-### Добавить нового клиента и его аккаунт
-```sql
--- Реляционная алгебра
+**РА**  
+```relational-algebra
+Create
+Добавить клиента и аккаунт
 Client ← Client ∪ {
     (152, 'Иванов Иван', 'PASS123', 'SNILS-001', 'ivan@mail.com', 
     'ivanov', 'pass123', '+79990000000', '1990-01-01', 'B-001')
 }
-
 Account ← Account ∪ {
-    (1001, 'ACC-001', 'savings', CURRENT_DATE, 'B-001', 152)
+    (1001, 'ACC-001', 'savings', CURRENT_DATE, 152, 'B-001')
 }
 
--- Реляционное исчисление
-INSERT INTO Client (id, full_name, passport_data, snils, email, login, password, phone, birth_date, bank_code) 
-VALUES (152, 'Иванов Иван', 'PASS123', 'SNILS-001', 'ivan@mail.com', 'ivanov', 'pass123', '+79990000000', '1990-01-01', 'B-001');
 
-INSERT INTO Account (id, account_number, type, open_date, bank_code, client_id) 
-VALUES (1001, 'ACC-001', 'savings', CURRENT_DATE, 'B-001', 152);
+
+
+
+Read
+Клиенты банка "B-001"
+π full_name (σ bank_code='B-001'(Client))
+
+Сотрудники с >5 тикетов
+π id, full_name (
+    σ count > 5 (
+        γ employee_id; COUNT(id)→count (
+            SupportTicket ⋈ Employee
+        )
+    )
+)
+
+Активные карты с балансом >100K
+π Card.type, Account.balance (
+    σ binding_status='active' ∧ balance>100000 (
+        Card ⋈ Account ⋈ Client
+    )
+)
+
+Банки без клиентов
+π code(Bank) − π bank_code(Client)
+
+Средняя комиссия по банкам
+γ bank_code; AVG(fee)→avg_fee(Operation ⋈ ATM)
+
+
+
+
+
+Update 
+Обновить статус банкомата и дату обслуживания
+ATM ← (ATM - σ code='ATM-045'(ATM)) ∪ 
+{('ATM-045', address, installation_date, CURRENT_DATE, 'out_of_service', bank_code)}
+
+
+
+
+
+Delete 
+Удалить клиента и связанные данные
+Client ← Client - σ id=152(Client)
+Account ← Account - σ client_id=152(Account)
+Card ← Card - σ client_id=152(Card)
+```
+### 1. Добавить клиента и аккаунт (2 таблицы)
+**РИ**
+```
+Crud
+Добавить клиента и аккаунт
+INSERT INTO Client VALUES (
+    152, 'Иванов Иван', 'PASS123', 'SNILS-001', 
+    'ivan@mail.com', 'ivanov', 'pass123', 
+    '+79990000000', '1990-01-01', 'B-001'
+);
+
+INSERT INTO Account VALUES (
+    1001, 'ACC-001', 'savings', 
+    CURRENT_DATE, 152, 'B-001'
+);
+
+
+
+
+Read
+Клиенты банка
+SELECT full_name FROM Client WHERE bank_code = 'B-001';
+
+
+Сотрудники с >5 тикетов
+SELECT e.id, e.full_name 
+FROM Employee e
+JOIN SupportTicket s ON e.id = s.employee_id
+GROUP BY e.id
+HAVING COUNT(s.id) > 5;
+
+
+Активные карты с балансом >100K
+SELECT c.type, a.balance 
+FROM Card c
+JOIN Account a ON c.account_id = a.id
+JOIN Client cl ON a.client_id = cl.id
+WHERE c.binding_status = 'active' AND a.balance > 100000;
+
+Банки без клиентов
+SELECT code FROM Bank
+WHERE code NOT IN (SELECT bank_code FROM Client);
+
+
+Средняя комиссия по банкам
+SELECT a.bank_code, AVG(o.fee) 
+FROM Operation o
+JOIN ATM a ON o.atm_code = a.code
+GROUP BY a.bank_code;
+
+
+
+Update
+Обновить статус банкомата и дату обслуживания
+UPDATE ATM 
+SET status = 'out_of_service', 
+    last_service_date = CURRENT_DATE 
+WHERE code = 'ATM-045';
+
+
+
+Delete
+DELETE FROM Client WHERE id = 152;
+DELETE FROM Account WHERE client_id = 152;
+DELETE FROM Card WHERE client_id = 152;
+```

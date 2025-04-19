@@ -3,8 +3,8 @@ package rut.miit.tech.web.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import rut.miit.tech.web.domain.model.SupportTicket;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface SupportTicketRepository extends JpaRepository<SupportTicket, Long> {
-    List<SupportTicket> findByUserId(Long userId);
+    Optional<SupportTicket> findById(Long Id);
 }

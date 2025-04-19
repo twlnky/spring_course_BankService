@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <form th:action="@{/auth/login/process}" th:method="POST" >
+        <div>
+            <label for="username">Enter login</label>
+        </div>
+        <div>
+            <input id="username" name="username">
+        </div>
+        <div>
+            <label for="password">Enter password</label>
+        </div>
+            <div>
+                <input type="password" id="password" name="password">
+            </div>
+        <button>
+            login
+        </button>
+        <a href="/auth/registration">
+            Go to registration page
+        </a>
+    </form>
+</body>
+</html>
