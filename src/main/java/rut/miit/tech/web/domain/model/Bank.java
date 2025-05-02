@@ -3,6 +3,7 @@ package rut.miit.tech.web.domain.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +24,7 @@ public class Bank {
     private String name;
 
     @Column(name = "registration_date", nullable = false)
-    private Date registrationDate;
+    private Timestamp registrationDate;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -31,7 +32,7 @@ public class Bank {
     @Column(name = "legal_address", nullable = false, columnDefinition = "TEXT")
     private String legalAddress;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 40)
     private String phone;
 
     @ToString.Exclude

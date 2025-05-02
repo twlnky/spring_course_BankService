@@ -1,15 +1,13 @@
 package rut.miit.tech.web.service.client;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rut.miit.tech.web.domain.model.Card;
 import rut.miit.tech.web.domain.model.Client;
 import rut.miit.tech.web.repository.ClientRepository;
-import rut.miit.tech.web.service.util.FilterUnit;
-import rut.miit.tech.web.service.util.PageResult;
-import rut.miit.tech.web.service.util.QueryBuilder;
-import rut.miit.tech.web.service.util.SortUnit;
+import rut.miit.tech.web.service.util.*;
 
 import java.util.List;
 @Service
@@ -18,11 +16,19 @@ import java.util.List;
 public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;;
     private final QueryBuilder queryBuilder;
-    @Override
-    public PageResult<List<Card>> getAll(int page, int pageSize, List<FilterUnit> filters, SortUnit sort) {
+    private final PasswordEncoder passwordEncoder;
 
-        return PageResult.of(queryBuilder.getAll(page, pageSize, filters, sort, Card.class),
-                queryBuilder.getPageCount(pageSize, filters, Card.class));
+    @Override
+    public PageResult<List<Client>> getAll(int page, int pageSize, List<FilterUnit> filters, SortUnit sort) {
+
+        return PageResult.of(queryBuilder.getAll(page, pageSize, filters, sort, Client.class),
+                queryBuilder.getPageCount(pageSize, filters, Client.class));
+    }
+
+    @Override
+    public PageResult<List<Client>> getAll(int page, int pageSize, CriteriaFilter<Client> filter, SortUnit sort) {
+        return PageResult.of(queryBuilder.getAll(page, pageSize, filter, sort, Client.class),
+                queryBuilder.getPageCount(pageSize, filter, Client.class));
     }
 
     //region CRUD
@@ -38,6 +44,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client update(Client client) {
+        client.setPassword(passwordEncoder.encode(client.getPassword()));
         return clientRepository.save(client);
     }
 

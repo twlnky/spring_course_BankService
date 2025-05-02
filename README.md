@@ -102,46 +102,32 @@
 
 ## 2. Связи между таблицами
 
-```mermaid
-erDiagram
+```plantuml
     BANK ||--o{ EMPLOYEE : "нанимает"
     BANK ||--o{ ATM : "обслуживает"
-    BANK ||--o{ ACCOUNT : "ведет"
-    BANK ||--o{ CARD : "эмитирует"
     CLIENT ||--o{ ACCOUNT : "владеет"
-    CLIENT ||--o{ CARD : "использует"
-    CLIENT ||--o{ SUPPORT_TICKET : "создает"
     ACCOUNT ||--o{ CARD : "привязан"
     ATM ||--o{ OPERATION : "выполняет"
     CARD ||--o{ OPERATION : "используется"
-    EMPLOYEE ||--o{ SUPPORT_TICKET : "обрабатывает"
-    SUPPORT_TICKET ||--o{ MESSAGE : "содержит"
 
 
 ```
 # CRUD-запросы
 
 **РА**  
-```relational-algebra
+```postgresql
 Create
-Добавить клиента и аккаунт
-Client ← Client ∪ {
-    (152, 'Иванов Иван', 'PASS123', 'SNILS-001', 'ivan@mail.com', 
-    'ivanov', 'pass123', '+79990000000', '1990-01-01', 'B-001')
+Добавить клиента и аккаунт              
+{  W1 = (152, 'Иванов Иван', 'PASS123', 'SNILS-001', 'ivan@mail.com', 'ivanov', 'pass123', '+79990000000', '1990-01-01', 'B-001')
+Client ← Client ∪ W1
+Account ← Account ∪ { (1001, 'ACC-001', 'savings', CURRENT_DATE) x  π id, bank_code(W1)}  
 }
-Account ← Account ∪ {
-    (1001, 'ACC-001', 'savings', CURRENT_DATE, 152, 'B-001')
-}
-
-
-
-
 
 Read
-Клиенты банка "B-001"
+Клиенты банка "B-001"           
 π full_name (σ bank_code='B-001'(Client))
 
-Сотрудники с >5 тикетов
+Сотрудники с >5 тикетов             
 π id, full_name (
     σ count > 5 (
         γ employee_id; COUNT(id)→count (
@@ -150,101 +136,310 @@ Read
     )
 )
 
-Активные карты с балансом >100K
+Активные карты с балансом >100K                 
 π Card.type, Account.balance (
     σ binding_status='active' ∧ balance>100000 (
         Card ⋈ Account ⋈ Client
     )
 )
 
-Банки без клиентов
+Банки без клиентов                                  
 π code(Bank) − π bank_code(Client)
 
-Средняя комиссия по банкам
+Средняя комиссия по банкам                             
 γ bank_code; AVG(fee)→avg_fee(Operation ⋈ ATM)
 
-
-
-
-
 Update 
-Обновить статус банкомата и дату обслуживания
-ATM ← (ATM - σ code='ATM-045'(ATM)) ∪ 
-{('ATM-045', address, installation_date, CURRENT_DATE, 'out_of_service', bank_code)}
-
-
-
-
+Обновить статус банкомата и дату обслуживания              
+old_atm ← σ_{code='ATM-045'}(ATM)
+new_atm ← π_{
+    code,
+    address,
+    installation_date,
+    CURRENT_DATE → last_service_date,  
+    'out_of_service' → status,        
+    bank_code
+}(old_atm)
+ATM ← (ATM − old_atm) ∪ new_atm
 
 Delete 
-Удалить клиента и связанные данные
+Удаление клиента                  
 Client ← Client - σ id=152(Client)
-Account ← Account - σ client_id=152(Account)
+Удаление аккаунтов
+Account ← Account - σ client_id=152(Account
+Удаление карт)
 Card ← Card - σ client_id=152(Card)
 ```
-### 1. Добавить клиента и аккаунт (2 таблицы)
-**РИ**
+**РА**
+```postgresql
+-- Добавление клиента   
+HOLD W(Client):
+    Client.id = 152
+    & Client.full_name = 'Иванов Иван'
+    & Client.password = 'PASS123'
+    & Client.snils = 'SNILS-001'
+    & Client.email = 'ivan@mail.com'
+    & Client.login = 'ivanov'
+    & Client.passport = 'pass123'
+    & Client.phone = '+79990000000'
+    & Client.birth_date = '1990-01-01'
+    & Client.bank_code = 'B-001'
+    & Account:
+        Account.id = 1001
+        & Account.number = 'ACC-001'
+        & Account.type = 'savings'
+        & Account.open_date = CURRENT_DATE
+        & Account.client_id = W.id
+        & Account.bank_code = W.bank_code
+PUT W
+
+-- Получить клиентов банка "B-001"      
+{Client.full_name | Client(Client) & Client.bank_code = 'B-001'}
+
+-- Сотрудники с >5 тикетов              
+{Employee.id, Employee.full_name | 
+    Employee(Employee) 
+    & ∃≥6 SupportTicket(SupportTicket.employee_id = Employee.id)}
+    
+--  Активные карты с балансом >100 000              
+{Card.type, Account.balance | 
+    Card(Card) 
+    & Account(Account) 
+    & Card.account_id = Account.id 
+    & Card.binding_status = 'active' 
+    & Account.balance > 100000}
+    
+-- Банки без клиентов                           
+{Bank.code | Bank(Bank) & ¬∃Client(Client.bank_code = Bank.code)}
+
+-- Средняя комиссия по банкам               
+RANGE Operation O
+RANGE ATM A
+{ Bank.code, AVG(O.fee) | 
+    O(O) 
+    & A(A) 
+    & O.atm_code = A.code 
+    & A.bank_code = Bank.code 
+    GROUP BY Bank.code }
+    
+-- Обновить статус банкомата                    
+HOLD W(ATM): ATM.code = 'ATM-045'
+W.status = 'out_of_service'
+W.last_service_date = CURRENT_DATE
+UPDATE W
+
+-- Обновление связанных операций
+HOLD W(Operation): Operation.atm_code = 'ATM-045'
+W.status = 'paused'
+UPDATE W       
+
+-- Удаление клиента
+HOLD W(Client): Client.id = 152
+DELETE W
+
+-- Удаление аккаунтов
+HOLD W(Account): Account.client_id = 152
+DELETE W
+
+-- Удаление карт
+HOLD W(Card): Card.client_id = 152
+DELETE W
 ```
-Crud
-Добавить клиента и аккаунт
-INSERT INTO Client VALUES (
-    152, 'Иванов Иван', 'PASS123', 'SNILS-001', 
-    'ivan@mail.com', 'ivanov', 'pass123', 
-    '+79990000000', '1990-01-01', 'B-001'
-);
-
-INSERT INTO Account VALUES (
-    1001, 'ACC-001', 'savings', 
-    CURRENT_DATE, 152, 'B-001'
-);
-
-
-
-
-Read
-Клиенты банка
-SELECT full_name FROM Client WHERE bank_code = 'B-001';
-
-
-Сотрудники с >5 тикетов
-SELECT e.id, e.full_name 
+**SQL** 
+```postgresql
+-- Добавление клиента   
+INSERT INTO Client (id, full_name, password, snils, email, login, passport, phone, birth_date, bank_code)
+VALUES (152, 'Иванов Иван', 'PASS123', 'SNILS-001', 'ivan@mail.com', 'ivanov', 'pass123', '+79990000000', '1990-01-01', 'B-001');
+-- Добавление аккаунта      
+INSERT INTO Account (id, number, type, open_date, client_id, bank_code)
+VALUES (1001, 'ACC-001', 'savings', CURRENT_DATE, 152, 'B-001');
+-- Получить клиентов банка "B-001" с сортировкой
+SELECT full_name
+FROM Client
+WHERE bank_code = 'B-001'
+ORDER BY full_name;
+-- Сотрудники с >5 тикетов              
+SELECT e.id, e.full_name
 FROM Employee e
-JOIN SupportTicket s ON e.id = s.employee_id
-GROUP BY e.id
-HAVING COUNT(s.id) > 5;
-
-
-Активные карты с балансом >100K
-SELECT c.type, a.balance 
+WHERE (
+          SELECT COUNT(*)
+          FROM SupportTicket
+          WHERE employee_id = e.id
+      ) >= 6;
+--  Активные карты с балансом >100 000              
+SELECT c.type, a.balance
 FROM Card c
-JOIN Account a ON c.account_id = a.id
-JOIN Client cl ON a.client_id = cl.id
-WHERE c.binding_status = 'active' AND a.balance > 100000;
-
-Банки без клиентов
-SELECT code FROM Bank
-WHERE code NOT IN (SELECT bank_code FROM Client);
-
-
-Средняя комиссия по банкам
-SELECT a.bank_code, AVG(o.fee) 
+         JOIN Account a ON c.account_id = a.id
+WHERE c.binding_status = 'active'
+  AND a.balance > 100000;
+-- Банки без клиентов                           
+SELECT code
+FROM Bank
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Client
+    WHERE Client.bank_code = Bank.code
+);
+-- Средняя комиссия по банкам               
+SELECT b.code, AVG(o.fee) AS avg_fee
 FROM Operation o
-JOIN ATM a ON o.atm_code = a.code
-GROUP BY a.bank_code;
-
-
-
-Update
-Обновить статус банкомата и дату обслуживания
-UPDATE ATM 
-SET status = 'out_of_service', 
-    last_service_date = CURRENT_DATE 
+         JOIN ATM a ON o.atm_code = a.code
+         JOIN Bank b ON a.bank_code = b.code
+GROUP BY b.code;
+-- Обновить статус банкомата                    
+UPDATE ATM
+SET
+    status = 'out_of_service',
+    last_service_date = CURRENT_DATE
 WHERE code = 'ATM-045';
-
-
-
-Delete
-DELETE FROM Client WHERE id = 152;
-DELETE FROM Account WHERE client_id = 152;
+-- Обновление связанных операций
+UPDATE Operation
+SET status = 'paused'
+WHERE atm_code = 'ATM-045';          
+-- Удаление карт
 DELETE FROM Card WHERE client_id = 152;
+
+-- Удаление аккаунтов
+DELETE FROM Account WHERE client_id = 152;
+
+-- Удаление клиента
+DELETE FROM Client WHERE id = 152;
+
+
+--Доп 
+-- Клиенты и их аккаунты (старый синтаксис JOIN)
+SELECT c.full_name, a.account_number
+FROM Client c, Account a
+WHERE c.id = a.client_id
+  AND c.bank_code = 'B-001'
+ORDER BY c.full_name;
+
+-- Клиенты и их аккаунты (старый синтаксис JOIN)
+SELECT c.full_name, a.account_number
+FROM Client c, Account a
+WHERE c.id = a.client_id
+  AND c.bank_code = 'B-001'
+ORDER BY c.full_name;
+
+-- Клиенты с кредитными картами
+SELECT full_name
+FROM Client
+WHERE id IN (
+    SELECT client_id
+    FROM Card
+    WHERE type = 'credit'
+)
+ORDER BY full_name;
+
+-- Количество карт каждого типа в банках
+SELECT b.code, c.type, COUNT(*) AS total_cards
+FROM Bank b
+         JOIN Card c ON b.code = c.bank_code
+GROUP BY b.code, c.type
+ORDER BY b.code, total
+```
+
+
+## Database 
+```postgresql
+
+create TABLE bank (
+    code VARCHAR(20) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    registration_date DATE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    legal_address TEXT NOT NULL,
+    phone VARCHAR(50) NOT NULL
+);
+
+create TABLE employee (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    login VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    bank_code VARCHAR(20) REFERENCES bank(code) ON DELETE CASCADE,
+    position VARCHAR(100) NOT NULL,
+    hire_date DATE NOT NULL
+);
+
+create TABLE client (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    passport_data VARCHAR(100) UNIQUE NOT NULL,
+    snils VARCHAR(14) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    login VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    birth_date DATE NOT NULL,
+    bank_code VARCHAR(20) REFERENCES bank(code) ON DELETE CASCADE
+);
+
+create TABLE account (
+    id SERIAL PRIMARY KEY,
+    account_number VARCHAR(30) UNIQUE NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    open_date DATE NOT NULL,
+    bank_code VARCHAR(20) REFERENCES bank(code) ON DELETE CASCADE,
+    client_id INT REFERENCES client(id) ON DELETE CASCADE
+);
+
+
+
+create TABLE atm (
+    code VARCHAR(20) PRIMARY KEY,
+    address TEXT NOT NULL,
+    installation_date DATE NOT NULL,
+    last_service_date DATE,
+    status VARCHAR(50) NOT NULL,
+    bank_code VARCHAR(20) REFERENCES bank(code) ON DELETE CASCADE
+);
+
+TABLE operation (
+    id SERIAL PRIMARY KEY,
+    operation_date DATE NOT NULL,
+    operation_time TIME NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    commission DECIMAL(15,2) NOT NULL,
+    atm_code VARCHAR(20) REFERENCES atm(code) ON DELETE SET NULL
+);
+
+create TABLE card (
+    id SERIAL PRIMARY KEY,
+    type VARCHAR(50) NOT NULL,
+    issue_date DATE NOT NULL,
+    expiration_date DATE NOT NULL,
+    bank_code VARCHAR(20) REFERENCES bank(code) ON DELETE CASCADE,
+    client_id INT REFERENCES client(id) ON DELETE CASCADE,
+    account_id INT REFERENCES account(id) ON DELETE CASCADE,
+    binding_date DATE NOT NULL,
+    binding_status VARCHAR(20) NOT NULL
+);
+
+create TABLE support_ticket (
+    id SERIAL PRIMARY KEY,
+    created_date DATE NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    description TEXT NOT NULL,
+    client_id INT REFERENCES client(id) ON DELETE CASCADE,
+    employee_id INT REFERENCES employee(id) ON DELETE SET NULL,
+    closed_date DATE
+);
+
+
+create TABLE message (
+    id SERIAL PRIMARY KEY,
+    sent_datetime TIMESTAMP NOT NULL,
+    text TEXT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    ticket_id INT REFERENCES support_ticket(id) ON DELETE CASCADE,
+    sender_client_id INT REFERENCES client(id) ON DELETE CASCADE,
+    sender_employee_id INT REFERENCES employee(id) ON DELETE CASCADE,
+    CHECK (
+        (sender_client_id IS NOT NULL AND sender_employee_id IS NULL) OR
+        (sender_client_id IS NULL AND sender_employee_id IS NOT NULL)
+    )
+);
+
 ```

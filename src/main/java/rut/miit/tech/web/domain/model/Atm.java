@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -23,13 +24,13 @@ public class Atm {
     private String address;
 
     @Column(name = "installation_date", nullable = false)
-    private Date installationDate;
+    private Timestamp installationDate;
 
     @Column(name = "last_service_date")
     private Date lastServiceDate;
 
     @Column(nullable = false, length = 50)
-    private String status;
+    private Boolean status;
 
     @ManyToOne
     @JoinColumn(name = "bank_code", nullable = false)

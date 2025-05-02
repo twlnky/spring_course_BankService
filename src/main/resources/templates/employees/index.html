@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${'Сотрудники банка ' + bankCode}">Сотрудники</title>
+    <link rel="icon" href="data:,">
+    <style>
+        :root {
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --primary-color: #1db954;
+            --primary-color-hover: #1a7340;
+            --container-bg-color: #f0f0f0;
+            --card-bg-color: #ffffff;
+            --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 12px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-btn:hover {
+            background-color: var(--primary-color-hover);
+        }
+        .employees-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .employee-card {
+            background-color: var(--card-bg-color);
+            box-shadow: var(--card-shadow);
+            border-radius: 6px;
+            padding: 15px;
+        }
+        .employee-card p {
+            margin: 5px 0;
+        }
+        .pagination {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<a th:href="@{/admin/index/view/{code}(code=${bankCode})}" class="back-btn">← Назад к банку</a>
+
+<h1>Сотрудники банка <span th:text="${bankCode}"/></h1>
+
+<div class="employees-container">
+    <div th:each="emp : ${employees}" class="employee-card">
+        <p><strong>Логин:</strong> <span th:text="${emp.login}"/></p>
+        <p><strong>Банк:</strong> <span th:text="${emp.bank.name}"/></p>
+        <p><strong>ФИО:</strong> <span th:text="${emp.fullName}"/></p>
+        <p><strong>Дата найма:</strong>
+            <span th:text="${#dates.format(emp.hireDate,'yyyy-MM-dd HH:mm:ss')}"/>
+        </p>
+        <p><strong>ID:</strong> <span th:text="${emp.id}"/></p>
+        <p><strong>Должность:</strong> <span th:text="${emp.position}"/></p>
+    </div>
+    <div th:if="${#lists.isEmpty(employees)}">Сотрудники не найдены.</div>
+</div>
+
+
+
+</body>
+</html>

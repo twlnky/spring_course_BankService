@@ -1,0 +1,44 @@
+1. Admin Page
+- CRUD Employee, Bank
+
+- /banks/create - GET/POST      | DONE
+- /banks/update/{id} - GET/POST | DONE
+- /banks/delete/{id} - POST     | DONE
+- /banks/{id} - GET             | DONE (TO DO: GET ATMS BY BANK, GET EMPLOYEE BY BANK) DONE
+- /banks/{id}/clients           | TODO: SEARCH AND PAGINATION //DONE
+- /banks/{id}/atms              | TODO: CREATE, UPDATE, DELETE //DONE
+- /banks/{id}/employee          | TODO: CREATE -> /employee/create, UPDATE -> /employee/update, DELETE //DONE
+
+
+- /employee/create - GET/POST        |
+- /employee/update/{id} - GET/POST   |
+- /employee/delete/{id} - POST       |
+- /employee/{id} - GET               |
+
+- /atms/create - GET/POST            |
+- /atms/update/{id} - GET/POST       |
+- /atms/delete/{id} - POST           |
+- /atms/{id} - GET                   |
+
+
+2. Client Page
+- account list
+- create account and card
+- close account
+- client information
+- support tickets
+
+3. Client Support Page
+- create ticket
+- list opened tickets
+
+4. Ticket Chat Page
+- chat
+- close ticket button
+
+5. ATM Page
+- Balance
+- Transaction Operations
+
+6. Employee Page
+- Opened Tickets

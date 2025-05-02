@@ -4,13 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rut.miit.tech.web.domain.model.Bank;
-import rut.miit.tech.web.domain.model.Card;
 import rut.miit.tech.web.repository.BankRepository;
-import rut.miit.tech.web.repository.CardRepository;
-import rut.miit.tech.web.service.util.FilterUnit;
-import rut.miit.tech.web.service.util.PageResult;
-import rut.miit.tech.web.service.util.QueryBuilder;
-import rut.miit.tech.web.service.util.SortUnit;
+import rut.miit.tech.web.service.util.*;
+
 import java.util.List;
 
 @Service
@@ -19,13 +15,30 @@ import java.util.List;
 public class BankServiceImpl implements BankService {
     private final BankRepository bankRepository;
     private final QueryBuilder queryBuilder;
+
     @Override
-    public Bank getById(Long id) {
-        return bankRepository.findById(id).orElseThrow(RuntimeException::new);
+    public List<Bank> getAll() {
+        return bankRepository.findAll();
     }
 
     @Override
+    public Bank getById(String code) {
+        List<Bank> banks = bankRepository.findByCode(code);
+        if (banks.isEmpty()) {
+            throw new RuntimeException("Bank with code " + code + " not found");
+        }
+        return banks.get(0);
+    }
+
+
+    @Override
     public PageResult<List<Bank>> getAll(int page, int pageSize, List<FilterUnit> filters, SortUnit sort) {
+        return PageResult.of(queryBuilder.getAll(page, pageSize, filters, sort, Bank.class),
+                queryBuilder.getPageCount(pageSize, filters, Bank.class));
+    }
+
+    @Override
+    public PageResult<List<Bank>> getAll(int page, int pageSize, CriteriaFilter<Bank> filters, SortUnit sort) {
         return PageResult.of(queryBuilder.getAll(page, pageSize, filters, sort, Bank.class),
                 queryBuilder.getPageCount(pageSize, filters, Bank.class));
     }
@@ -41,7 +54,9 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    public void delete(Long id) {
-        bankRepository.deleteById(id);
+    public void deleteByCode(String code) {
+        bankRepository.deleteById(code);
     }
+
+
 }

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Создание банка</title>
+  <link rel="icon" href="data:,">
+  <style>
+
+    :root {
+      --bg: #ffffff;
+      --text: #333;
+      --primary: #1db954;
+      --primary-hover: #14813d;
+      --error: #ff4d4d;
+      --border: #ccc;
+      --card: #fff;
+      --shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --bg: #121212;
+      --text: #e0e0e0;
+      --primary: #1db954;
+      --primary-hover: #14813d;
+      --error: #ff4d4d;
+      --border: #444;
+      --card: #1e1e1e;
+      --shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: var(--primary);
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 80px auto;
+      padding: 2rem;
+      background: var(--card);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .error-container {
+      color: var(--error);
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--primary);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: var(--primary-hover);
+    }
+  </style>
+</head>
+<body>
+
+<div class="theme-toggle" onclick="toggleTheme()">🌙 / ☀️</div>
+
+<div class="container">
+  <h2>Создание банка</h2>
+
+  <form th:object="${bank}" th:action="@{/admin/index/create}" th:method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+    <div class="error-container" th:if="${#fields.hasGlobalErrors()}">
+      <div th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="code">Код банка</label>
+      <div class="error-container" th:if="${#fields.hasErrors('code')}" th:errors="*{code}"></div>
+      <input id="code" th:field="*{code}" maxlength="20" required>
+    </div>
+
+    <div class="form-group">
+      <label for="name">Название банка</label>
+      <div class="error-container" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+      <input id="name" th:field="*{name}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <div class="error-container" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+      <input id="email" type="email" th:field="*{email}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="legalAddress">Юридический адрес</label>
+      <div class="error-container" th:if="${#fields.hasErrors('legalAddress')}" th:errors="*{legalAddress}"></div>
+      <textarea id="legalAddress" rows="3" th:field="*{legalAddress}" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Телефон</label>
+      <div class="error-container" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+      <input id="phone" type="tel" th:field="*{phone}" pattern="^\+?[1-9]\d{1,14}$" required>
+    </div>
+
+    <button type="submit">Создать банк</button>
+  </form>
+</div>
+
+<script>
+  function toggleTheme() {
+    const theme = document.documentElement.getAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'light' : 'dark');
+  }
+</script>
+
+</body>
+</html>

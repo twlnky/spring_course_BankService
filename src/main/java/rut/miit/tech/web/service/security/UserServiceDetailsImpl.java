@@ -19,9 +19,13 @@ import java.util.Optional;
 public class UserServiceDetailsImpl implements UserDetailsService {
     private final ClientRepository clientRepository;
     private final EmployeeRepository employeeRepository;
+    private final UserDetails adminDetails;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if(username.equals(adminDetails.getUsername())){
+            return adminDetails;
+        }
         Optional<Client> client = clientRepository.findByLogin(username);
         Optional<Employee> employee = employeeRepository.findByLogin(username);
         return client.isPresent() ? new ClientUserDetails(client.get())

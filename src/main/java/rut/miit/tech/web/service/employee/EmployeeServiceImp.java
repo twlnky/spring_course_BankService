@@ -5,12 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rut.miit.tech.web.domain.model.Card;
+import rut.miit.tech.web.domain.model.Client;
 import rut.miit.tech.web.domain.model.Employee;
 import rut.miit.tech.web.repository.EmployeeRepository;
-import rut.miit.tech.web.service.util.FilterUnit;
-import rut.miit.tech.web.service.util.PageResult;
-import rut.miit.tech.web.service.util.QueryBuilder;
-import rut.miit.tech.web.service.util.SortUnit;
+import rut.miit.tech.web.service.util.*;
 
 import java.util.List;
 
@@ -31,6 +29,12 @@ public class EmployeeServiceImp implements EmployeeService {
 
         return PageResult.of(queryBuilder.getAll(page, pageSize, filters, sort, Employee.class),
                 queryBuilder.getPageCount(pageSize, filters, Employee.class));
+    }
+
+    @Override
+    public PageResult<List<Employee>> getAll(int page, int pageSize, CriteriaFilter<Employee> filter, SortUnit sort) {
+        return PageResult.of(queryBuilder.getAll(page, pageSize, filter, sort, Employee.class),
+                queryBuilder.getPageCount(pageSize, filter, Employee.class));
     }
 
     @Override

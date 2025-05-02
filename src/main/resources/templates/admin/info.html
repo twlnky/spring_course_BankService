@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Информация о банке</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --background-color: #ffffff;
+      --text-color: #333333;
+      --primary-color: #1db954;
+      --primary-color-hover: #1a7340;
+      --error-color: #ff0000;
+      --container-bg-color: #f0f0f0;
+      --border-color: #cccccc;
+      --card-bg-color: #ffffff;
+      --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    [data-theme="dark"] {
+      --background-color: #121212;
+      --text-color: #e0e0e0;
+      --primary-color: #1db954;
+      --primary-color-hover: #1a7340;
+      --container-bg-color: #1e1e1e;
+      --border-color: #444444;
+      --card-bg-color: #2d2d2d;
+      --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .theme-toggle {
+      position: absolute;
+      top: 20px; right: 20px;
+      cursor: pointer;
+      color: var(--primary-color);
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 10px 15px;
+      background-color: var(--primary-color);
+      color: white; text-decoration: none;
+      border-radius: 4px;
+    }
+    .back-btn:hover { background-color: var(--primary-color-hover); }
+    .bank-info-container {
+      max-width: 800px; margin: 0 auto;
+      background-color: var(--card-bg-color);
+      box-shadow: var(--card-shadow);
+      border-radius: 8px; padding: 20px;
+    }
+    .bank-details p {
+      margin: 10px 0;
+    }
+    .action-links a {
+      display: inline-block;
+      margin-right: 10px;
+      padding: 8px 12px;
+      background-color: var(--primary-color);
+      color: white; text-decoration: none;
+      border-radius: 4px;
+    }
+    .action-links a:hover {
+      background-color: var(--primary-color-hover);
+    }
+  </style>
+</head>
+<body data-theme="light">
+
+<div class="theme-toggle" onclick="toggleTheme()">Toggle Dark/Light Mode</div>
+
+<a href="/admin/index" class="back-btn">← Назад к списку банков</a>
+
+<div class="bank-info-container">
+  <h1 th:text="${bank.name}">Название банка</h1>
+  <div class="bank-details">
+    <p><strong>Код банка:</strong> <span th:text="${bank.code}">code</span></p>
+    <p><strong>Дата регистрации:</strong> <span th:text="${#dates.format(bank.registrationDate, 'yyyy-MM-dd HH:mm:ss')}">date</span></p>
+    <p><strong>Email:</strong> <span th:text="${bank.email}">email</span></p>
+    <p><strong>Юридический адрес:</strong> <span th:text="${bank.legalAddress}">address</span></p>
+    <p><strong>Телефон:</strong> <span th:text="${bank.phone}">phone</span></p>
+    <p><strong>Клиентов:</strong> <span th:text="${bank.clients.size()}">0</span></p>
+    <p><strong>Сотрудников:</strong> <span th:text="${bank.employees.size()}">0</span></p>
+    <p><strong>Банкоматов:</strong> <span th:text="${bank.atms.size()}">0</span></p>
+  </div>
+
+  <div class="action-links">
+    <a th:href="@{/admin/index/{code}/clients(code=${bank.code})}">Клиенты</a>
+    <a th:href="@{/admin/index/{code}/atms(code=${bank.code})}">Банкоматы</a>
+    <a th:href="@{/admin/index/{code}/employees(code=${bank.code})}">Сотрудники</a>
+  </div>
+
+</div>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    if (html.getAttribute('data-theme')==='dark') {
+      html.setAttribute('data-theme','light');
+    } else {
+      html.setAttribute('data-theme','dark');
+    }
+  }
+</script>
+
+</body>
+</html>

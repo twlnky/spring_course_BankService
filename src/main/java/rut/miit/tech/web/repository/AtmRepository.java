@@ -5,7 +5,7 @@ import rut.miit.tech.web.domain.model.Atm;
 
 import java.util.Optional;
 
-public interface AtmRepository extends JpaRepository<Atm, Long> {
+public interface AtmRepository extends JpaRepository<Atm, String> {
     Optional<Atm> findByCode(String accountCode);
 
 }

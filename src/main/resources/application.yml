@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: Web
+  datasource:
+    url: jdbc:postgresql://localhost:5432/first_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  profiles:
+    active: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+admin:
+  password:
+    1
+
+test:
+  records:
+    count: 170

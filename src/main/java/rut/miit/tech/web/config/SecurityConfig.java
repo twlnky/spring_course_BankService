@@ -23,11 +23,6 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     @SneakyThrows
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http){
@@ -37,15 +32,20 @@ public class SecurityConfig {
                 .formLogin(form ->
                         form.loginPage("/auth/login")
                         .loginProcessingUrl("/auth/login/process")
+                                .defaultSuccessUrl("/redirection", true)
                 )
                 .userDetailsService(userDetailsService)
                 .authorizeHttpRequests(
                         requests ->
-                                requests.requestMatchers("/auth/**")
+                                requests.requestMatchers("/auth/**","/css/**","/js/**","/img/**","/access_denied")
                                         .permitAll()
+                                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                                        .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
+                                        .requestMatchers("/client/**").hasAuthority("CLIENT")
                                         .anyRequest()
                                         .authenticated()
-                )
+                ).exceptionHandling(handler ->
+                        handler.accessDeniedPage("/access_denied"))
                 .build();
     }
 

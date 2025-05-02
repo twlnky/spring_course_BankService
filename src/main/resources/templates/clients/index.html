@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${'Clients of Bank ' + bankCode}"></title>
+    <link rel="icon" href="data:,">
+</head>
+<body>
+  <div>
+    <div th:each="client: ${clients}">
+      <p th:text="${client.email}"></p>
+      <p th:text="${client.fullName}"></p>
+      <p th:text="${client.login}"></p>
+      <p th:text="${client.phone}"></p>
+      <p th:text="${client.passportData}"></p>
+    </div>
+  </div>
+
+</body>
+</html>
