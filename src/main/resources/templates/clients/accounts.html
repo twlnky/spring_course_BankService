@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Page</title>
+  <title>Мои счета</title>
   <link rel="icon" href="data:,">
   <style>
     :root {
@@ -75,71 +75,29 @@
       background-color: var(--primary-color-hover);
     }
 
-    .create-btn {
-      display: inline-block;
-      margin-bottom: 20px;
-      padding: 10px 15px;
-      background-color: var(--primary-color);
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
+    .account-container {
+      margin-top: 20px;
+      width: 100%;
+      overflow-x: auto;
     }
 
-    .create-btn:hover {
-      background-color: var(--primary-color-hover);
+    table {
+      width: 100%;
+      border-collapse: collapse;
     }
 
-    .banks-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .bank-card {
-      background-color: var(--card-bg-color);
-      border-radius: 8px;
-      box-shadow: var(--card-shadow);
-      overflow: hidden;
-      transition: transform 0.3s ease;
-    }
-
-    .bank-card:hover {
-      transform: translateY(-10px);
-    }
-
-    .card-header {
-      padding: 15px;
-      height: 127px;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: var(--primary-color);
-      color: white;
-      font-size: 1.2em;
-    }
-
-    .card-body {
-      padding: 15px;
-    }
-
-    .card-body p {
-      margin: 8px 0;
-      font-size: 0.9em;
-    }
-
-    .bank-actions {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 15px;
+    th {
       background-color: var(--container-bg-color);
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
     }
 
-    .bank-actions a,
-    .bank-actions form button {
+    .action-buttons a,
+    .action-buttons form button {
       padding: 5px 10px;
       text-decoration: none;
       border-radius: 4px;
@@ -148,17 +106,16 @@
       cursor: pointer;
     }
 
-    .view-link {
+    .action-buttons a {
       background-color: var(--primary-color);
       color: white;
     }
 
-    .update-link {
-      background-color: #f0ad4e;
-      color: white;
+    .action-buttons a:hover {
+      background-color: var(--primary-color-hover);
     }
 
-    .delete-button {
+    .action-buttons form button {
       background-color: #d9534f;
       color: white;
     }
@@ -192,49 +149,43 @@
       border-color: var(--primary-color);
       font-weight: bold;
     }
-
-    .pagination-container label {
-      padding: 0 10px;
-    }
   </style>
 </head>
 <body>
 
 <div class="theme-toggle" onclick="toggleTheme()">Toggle Dark/Light Mode</div>
 
-<div th:if="${param.error}" class="error-message">
-  Ошибка при обработке запроса
-</div>
-
+<h1>Мои счета</h1>
 <div class="search-container">
-  <label>
-    <input th:value="${search}" type="text" id="searchQuery" placeholder="Search...">
-  </label>
-  <button onclick="searchBanks()">Search</button>
+  <form th:action="@{/clients/account}" method="get">
+    <input name="q" th:value="${q}" placeholder="Поиск" />
+    <button type="submit">Поиск</button>
+  </form>
 </div>
 
-<a href="/admin/index/create" class="create-btn">Создать новый</a>
-
-<div th:if="${banks != null}" class="banks-container">
-  <div th:each="bank : ${banks}" class="bank-card">
-    <div class="card-header">
-      <span th:text="${bank.name != null ? bank.name : '—'}">Название банка</span>
-    </div>
-    <div class="card-body">
-      <!-- можно вставить описание, адрес и т.п. -->
-    </div>
-    <div class="bank-actions">
-      <a th:href="@{/admin/index/view/{c}(c=${bank.code})}" class="view-link">Посмотреть</a>
-      <a th:href="@{/admin/index/update/{c}(c=${bank.code})}" class="update-link">Обновить</a>
-      <form th:action="@{/admin/index/delete/{c}(c=${bank.code})}" method="post" onsubmit="return confirm('Удалить банк?');">
-        <input type="hidden"
-               th:if="${_csrf != null}"
-               th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}" />
-        <button type="submit" class="delete-button">Удалить</button>
-      </form>
-    </div>
-  </div>
+<div class="account-container">
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th><th>Номер</th><th>Тип</th><th>Открыт</th><th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="acc : ${accounts}">
+      <td th:text="${acc.id}">1</td>
+      <td th:text="${acc.accountNumber}">123456</td>
+      <td th:text="${acc.type}">Текущий</td>
+      <td th:text="${#dates.format(acc.openDate,'dd.MM.yyyy')}">01.01.2025</td>
+      <td class="action-buttons">
+        <a th:href="@{/clients/account/{id}(id=${acc.id})}">Открыть</a>
+        <form th:action="@{/clients/account/{id}/delete(id=${acc.id})}" method="post"
+              onsubmit="return confirm('Удалить?');" style="display:inline;">
+          <button type="submit">Удалить</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>
 
 <div class="pagination-container">
@@ -269,15 +220,10 @@
     event.preventDefault();
     const button = event.target.closest("button");
     const pageNumber = button?.getAttribute('data-page');
-    const searchQuery = document.getElementById('searchQuery').value;
+    const searchQuery = document.querySelector("input[name='q']").value;
     if (pageNumber) {
-      window.location.href = `/admin?page=${pageNumber}&search=${searchQuery}`;
+      window.location.href = `/clients/account?page=${pageNumber}&q=${searchQuery}`;
     }
-  }
-
-  function searchBanks() {
-    const searchQuery = document.getElementById('searchQuery').value;
-    window.location.href = `/admin?search=${searchQuery}`;
   }
 </script>
 

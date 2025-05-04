@@ -64,7 +64,7 @@ public class BankController {
             @RequestParam(value = "q", defaultValue = "") String q,
             Model model) {
 
-
+        Bank bank = bankService.getById(code);
         PageResult<List<Client>> clientPage = clientService.getAll(
                 page, 10,
                 (cb, root) -> {
@@ -85,6 +85,7 @@ public class BankController {
         model.addAttribute("pageCount", clientPage.getPageCount());
         model.addAttribute("search", q);
         model.addAttribute("bankCode", code);
+        model.addAttribute("bank", bank);
         return "clients/index";
     }
 
@@ -95,7 +96,7 @@ public class BankController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "q", defaultValue = "") String q,
             Model model) {
-
+        Bank bank = bankService.getById(code);
         PageResult<List<Atm>> atmPage = atmService.getAll(
                 page, 10,
                 (cb, root) -> {
@@ -115,6 +116,8 @@ public class BankController {
         model.addAttribute("currentPage", page);
         model.addAttribute("pageCount",   atmPage.getPageCount());
         model.addAttribute("bankCode",    code);
+        model.addAttribute("bank", bank);
+
         return "atms/index";
     }
 
@@ -125,7 +128,7 @@ public class BankController {
             @PathVariable String code,
             @RequestParam(value = "page", defaultValue = "0") int page,
             Model model) {
-
+        Bank bank = bankService.getById(code);
         PageResult<List<Employee>> employeePage = employeeService.getAll(
                 page, 10,
                 (cb, root) -> new Predicate[]{
@@ -138,6 +141,8 @@ public class BankController {
         model.addAttribute("currentPage", page);
         model.addAttribute("pageCount",   employeePage.getPageCount());
         model.addAttribute("bankCode",    code);
+        model.addAttribute("bank", bank);
+
         return "employees/index";
     }
 

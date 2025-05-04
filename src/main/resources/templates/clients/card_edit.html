@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактирование карты</title>
+  <link rel="icon" href="data:,">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    .form-container {
+      max-width: 600px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .btn:hover {
+      background-color: #218838;
+    }
+    .btn-delete {
+      background-color: #dc3545;
+    }
+    .form-group select option {
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="form-container">
+  <h2>Редактирование карты</h2>
+  <form th:action="@{/clients/card/{id}/edit(id=${card.id})}" method="post">
+    <!-- Поля редактирования карты -->
+    <div class="form-group">
+      <label for="type">Тип карты</label>
+      <select name="type" id="type" required>
+        <option value="debit" th:selected="${card.type == 'debit'}">Дебетовая</option>
+        <option value="credit" th:selected="${card.type == 'credit'}">Кредитная</option>
+        <option value="maestro" th:selected="${card.type == 'maestro'}">Maestro</option>
+        <option value="solo" th:selected="${card.type == 'solo'}">Solo</option>
+        <option value="diners_club" th:selected="${card.type == 'diners_club'}">Diners Club</option>
+        <option value="dankort" th:selected="${card.type == 'dankort'}">Dankort</option>
+        <option value="laser" th:selected="${card.type == 'laser'}">Laser</option>
+        <option value="american_express" th:selected="${card.type == 'american_express'}">American Express</option>
+        <option value="visa" th:selected="${card.type == 'visa'}">Visa</option>
+        <option value="mastercard" th:selected="${card.type == 'mastercard'}">Mastercard</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn">Обновить карту</button>
+    </div>
+  </form>
+
+  <!-- Кнопка для удаления карты -->
+  <form th:action="@{/clients/card/{id}/delete(id=${card.id})}" method="post">
+    <button type="submit" class="btn btn-delete">Удалить карту</button>
+  </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Личный кабинет</title>
+    <link rel="icon" href="data:,">
+    <style>
+        :root {
+            --bg: #f4f4f4; --fg: #333;
+            --card: #fff; --accent: #1db954; --accent-hover: #1a7340;
+            --shadow: rgba(0,0,0,0.1);
+        }
+        [data-theme="dark"] {
+            --bg:#121212; --fg:#e0e0e0; --card:#1f1f1f;
+            --shadow:rgba(0,0,0,0.5);
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:Arial,sans-serif;background:var(--bg);color:var(--fg);
+            display:flex;flex-direction:column;align-items:center;padding:2rem;}
+        .theme-toggle{position:fixed;top:1rem;right:1rem;
+            background:var(--accent);color:#fff;padding:.5rem 1rem;border:none;
+            border-radius:4px;cursor:pointer;transition:.2s;}
+        .theme-toggle:hover{background:var(--accent-hover);}
+        .dashboard{background:var(--card);border-radius:8px;
+            box-shadow:0 4px 12px var(--shadow);max-width:800px;width:100%;
+            overflow:hidden;}
+        .dashboard-header{background:var(--accent);color:#fff;
+            padding:1.5rem;text-align:center;}
+        .dashboard-header h1{font-size:1.75rem;margin-bottom:.25rem;}
+        .dashboard-body{display:flex;flex-wrap:wrap;padding:1.5rem;
+            gap:1.5rem;justify-content:space-between;}
+        .section{background:var(--card);flex:1 1 320px;
+            border-radius:6px;padding:1rem;box-shadow:0 2px 6px var(--shadow);
+            display:flex;flex-direction:column;}
+        .section h2{font-size:1.1rem;margin-bottom:.75rem;border-bottom:1px solid var(--shadow);
+            padding-bottom:.25rem;}
+        .section p{margin-bottom:.75rem;}
+        .section p strong{display:inline-block;width:130px;opacity:.8;}
+        .actions{margin-top:auto;display:flex;gap:.75rem;}
+        .btn{flex:1;text-align:center;background:var(--accent);color:#fff;
+            padding:.5rem 0;border-radius:4px;text-decoration:none;transition:.2s;}
+        .btn:hover{background:var(--accent-hover);}
+        @media(max-width:600px){.dashboard-body{flex-direction:column;}}
+    </style>
+</head>
+<body data-theme="">
+
+<button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h1>Добро пожаловать, <span th:text="${client.fullName}">Имя Фамилия</span>!</h1>
+        <p>Ваш персональный кабинет</p>
+    </div>
+    <div class="dashboard-body">
+
+        <!-- Секция профиля -->
+        <div class="section">
+            <h2>Профиль</h2>
+            <p><strong>Имя:</strong> <span th:text="${client.fullName}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${client.email}"></span></p>
+            <p><strong>Телефон:</strong> <span th:text="${client.phone}"></span></p>
+            <p><strong>Дата рождения:</strong>
+                <span th:text="${#dates.format(client.birthDate, 'dd.MM.yyyy')}"></span>
+            </p>
+            <div class="actions">
+                <a href="/clients/update" class="btn">Редактировать профиль</a>
+                <a href="/clients/chat" class="btn">Чат поддержки</a>
+                <a href="/clients/tickets" class="btn">Мои запросы</a>
+            </div>
+        </div>
+
+        <!-- Секция счёта -->
+        <div th:if="${accounts != null and !accounts.isEmpty()}">
+            <div class="section" th:each="account : ${accounts}">
+                <h2>Счёт</h2>
+                <p><strong>Номер:</strong> <span th:text="${account.accountNumber}"/></p>
+                <p><strong>Тип:</strong> <span th:text="${account.type}"/></p>
+                <p><strong>Открыт:</strong> <span th:text="${#dates.format(account.openDate, 'dd.MM.yyyy')}"/></p>
+                <p><strong>Банк:</strong> <span th:text="${account.bank.name}"/></p>
+                <div class="actions">
+                    <a th:href="@{/clients/account/{id}(id=${account.id})}" class="btn">Просмотреть</a>
+                    <a th:href="@{/clients/account/{id}/cards/create(id=${account.id})}" class="btn">Добавить карту</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Если у клиента ещё нет счёта -->
+        <div class="section" th:if="${accounts == null or accounts.isEmpty()}">
+            <h2>Счёт</h2>
+            <p>У вас ещё нет открытых счетов.</p>
+            <div class="actions">
+                <a href="/clients/account/create" class="btn">Открыть счёт</a>
+            </div>
+        </div>
+
+        <!-- Секция карт -->
+        <div th:if="${cards != null and !cards.isEmpty()}">
+            <div class="section">
+                <h2>Мои карты</h2>
+                <div class="card-list" style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                    <div class="card-item" th:each="card : ${cards}" style="background: var(--card); border-radius: 6px; box-shadow: 0 2px 6px var(--shadow); padding: 1rem; flex: 1 1 250px;">
+                        <p><strong>Номер карты:</strong> <span th:text="${card.id}">**** **** **** ****</span></p>
+                        <p><strong>Тип карты:</strong> <span th:text="${card.type}">Дебетовая</span></p>
+                        <p><strong>Срок действия:</strong> <span th:text="${#dates.format(card.expirationDate, 'MM/yy')}">12/25</span></p>
+                        <div class="actions">
+                            <a th:href="@{/clients/card/{id}(id=${card.id})}" class="btn">Просмотреть</a>
+                            <a th:href="@{/clients/card/{id}/edit(id=${card.id})}" class="btn">Редактировать</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Если у клиента нет карт -->
+        <div th:if="${cards == null or cards.isEmpty()}">
+            <div class="section">
+                <h2>Мои карты</h2>
+                <p>У вас нет добавленных карт.</p>
+                <div class="actions">
+                    <a href="/clients/cards/create" class="btn">Добавить карту</a>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        html.setAttribute('data-theme', html.getAttribute('data-theme')==='dark' ? '' : 'dark');
+    }
+</script>
+
+</body>
+</html>

@@ -20,6 +20,19 @@ public class QueryBuilder {
     private final EntityManager entityManager;
 
 
+    public <T> List<T> getAll(CriteriaFilter<T> filter, SortUnit sort, Class<T> rootType) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> query = criteriaBuilder.createQuery(rootType);
+        Root<T> root = query.from(rootType);
+        //Фильтрация
+        query.where(filter.mapToPredicates(criteriaBuilder, root));
+        switch (sort.getOrder()){
+            case ASC -> query.orderBy(criteriaBuilder.asc(root.get(sort.getField())));
+            case DESC -> query.orderBy(criteriaBuilder.desc(root.get(sort.getField())));
+        }
+        return  entityManager.createQuery(query).getResultList();
+    }
+
     public <T> List<T> getAll(int page, int pageSize, CriteriaFilter<T> filter, SortUnit sort, Class<T> rootType) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> query = criteriaBuilder.createQuery(rootType);

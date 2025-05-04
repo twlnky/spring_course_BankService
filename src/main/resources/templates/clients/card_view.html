@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Детали карты</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --background-color: #ffffff;
+      --text-color: #333333;
+      --primary-color: #1db954;
+      --primary-color-hover: #1a7340;
+      --error-color: #ff0000;
+      --container-bg-color: #f0f0f0;
+      --border-color: #cccccc;
+      --card-bg-color: #ffffff;
+      --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --background-color: #121212;
+      --text-color: #e0e0e0;
+      --primary-color: #1db954;
+      --primary-color-hover: #1a7340;
+      --error-color: #ff4d4d;
+      --container-bg-color: #1e1e1e;
+      --border-color: #444444;
+      --card-bg-color: #2d2d2d;
+      --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      color: var(--primary-color);
+      font-size: 16px;
+    }
+
+    .card {
+      background-color: var(--card-bg-color);
+      border-radius: 8px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      margin-bottom: 20px;
+      padding: 20px;
+    }
+
+    .card-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .card-body {
+      padding: 10px;
+    }
+
+    .card-body p {
+      margin: 8px 0;
+      font-size: 1.1em;
+    }
+
+    .error-message {
+      color: var(--error-color);
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: var(--primary-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+
+    .back-link:hover {
+      background-color: var(--primary-color-hover);
+    }
+  </style>
+</head>
+<body>
+
+<div class="theme-toggle" onclick="toggleTheme()">Toggle Dark/Light Mode</div>
+
+<div th:if="${card == null}" class="error-message">
+  <p>Карта не найдена или доступ запрещён.</p>
+  <!-- Ссылка для возврата к счёту с правильно переданным accountId -->
+  <a th:href="@{/clients/account/{id}(id=${account.id})}">Детали счета</a>
+</div>
+
+<div th:if="${card != null}" class="card">
+  <div class="card-header">
+    Карта № <span th:text="${card.id}"/>
+  </div>
+  <div class="card-body">
+    <p><strong>Тип:</strong> <span th:text="${card.type}"/></p>
+    <p><strong>Выпуск:</strong> <span th:text="${#dates.format(card.issueDate,'dd.MM.yyyy')}"/></p>
+    <p><strong>Истекает:</strong> <span th:text="${#dates.format(card.expirationDate,'dd.MM.yyyy')}"/></p>
+    <!-- Ссылка для возврата к счёту с правильно переданным accountId -->
+    <a th:href="@{/clients}" class="back-link">← К счёту</a>
+  </div>
+</div>
+
+<script>
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    if (currentTheme === 'dark') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  }
+</script>
+
+</body>
+</html>

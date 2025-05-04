@@ -49,6 +49,7 @@ public class DataSeeder implements CommandLineRunner {
 
             bankRepository.deleteAll();
             clientRepository.deleteAll();
+
             for (int i = 0; i < testRecords; i++) {
                 Bank bank = new Bank();
                 bank.setRegistrationDate(Timestamp.from(Instant.now()));
@@ -60,16 +61,16 @@ public class DataSeeder implements CommandLineRunner {
                 bank = bankRepository.save(bank);
 
                 Client client = new Client();
-                client.setLogin(faker.name().username());
+                client.setLogin("cl" + i);
                 client.setPassportData(faker.numerify("#### ######"));
-                client.setPassword(passwordEncoder.encode(faker.internet().password()));
+                client.setPassword(passwordEncoder.encode(String.valueOf(i)));
                 String clientPhone = faker.phoneNumber().phoneNumber();
                 if (clientPhone.length() > 20) {
                     clientPhone = clientPhone.substring(0, 20);
                 }
                 client.setPhone(clientPhone);
                 client.setEmail(faker.internet().emailAddress());
-                client.setEnable(randStatusBoolean());
+                client.setEnable(true);
                 client.setFullName(faker.funnyName().name());
                 client.setBirthDate(new Date(System.currentTimeMillis()));
                 client.setSnils(faker.numerify("###-###-### ##"));
@@ -107,8 +108,8 @@ public class DataSeeder implements CommandLineRunner {
 
                 Employee employee = new Employee();
                 employee.setBank(bank);
-                employee.setPassword(passwordEncoder.encode(faker.internet().password()));
-                employee.setLogin(faker.name().username());
+                employee.setPassword(passwordEncoder.encode(String.valueOf(i)));
+                employee.setLogin("empl" + i);
                 employee.setFullName(faker.name().fullName());
                 employee.setPosition(faker.job().position());
                 employee.setHireDate(Timestamp.from(Instant.now()));
@@ -131,7 +132,7 @@ public class DataSeeder implements CommandLineRunner {
                 message.setStatus(randStatusString());
                 message.setText(massageText);
                 message.setTicket(supportTicket);
-                message.setSenderEmployee(employee);
+                message.setSenderClient(client);
                 message.setSentDatetime(Timestamp.from(Instant.now()));
                 message = messageRepository.save(message);
 

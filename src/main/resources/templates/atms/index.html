@@ -2,7 +2,7 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title th:text="${'Банкоматы банка ' + bankCode}">Банкоматы</title>
+  <title th:text="${'Банкоматы банка ' + bank.name}">Банкоматы</title>
   <link rel="icon" href="data:,">
   <style>
     :root {
@@ -90,7 +90,7 @@
 <div class="theme-toggle" onclick="toggleTheme()">Toggle Dark/Light Mode</div>
 <a th:href="@{/admin/index/view/{code}(code=${bankCode})}" class="back-btn">← Назад к банку</a>
 
-<h1>Банкоматы банка <span th:text="${bankCode}"/></h1>
+<h1>Банкоматы банка <span th:text="${bank.name}"/></h1>
 
 <div class="atms-container">
   <div th:each="atm : ${atms}" class="atm-card">

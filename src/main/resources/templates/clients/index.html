@@ -1,20 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${'Clients of Bank ' + bankCode}"></title>
+    <title th:text="${'Клиенты банка ' + bank.name}">Клиенты</title>
     <link rel="icon" href="data:,">
+    <style>
+        :root {
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --primary-color: #1db954;
+            --primary-color-hover: #1a7340;
+            --container-bg-color: #f0f0f0;
+            --card-bg-color: #ffffff;
+            --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 12px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-btn:hover {
+            background-color: var(--primary-color-hover);
+        }
+        .clients-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .client-card {
+            background-color: var(--card-bg-color);
+            box-shadow: var(--card-shadow);
+            border-radius: 6px;
+            padding: 15px;
+        }
+        .client-card p {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
-  <div>
-    <div th:each="client: ${clients}">
-      <p th:text="${client.email}"></p>
-      <p th:text="${client.fullName}"></p>
-      <p th:text="${client.login}"></p>
-      <p th:text="${client.phone}"></p>
-      <p th:text="${client.passportData}"></p>
+
+<a th:href="@{/admin/index/view/{code}(code=${bankCode})}" class="back-btn">← Назад к банку</a>
+
+<h1>Клиенты банка <span th:text="${bank.name}"/></h1>
+
+
+<div class="clients-container">
+    <div th:each="client : ${clients}" class="client-card">
+        <p><strong>Email:</strong> <span th:text="${client.email}"/></p>
+        <p><strong>ФИО:</strong> <span th:text="${client.fullName}"/></p>
+        <p><strong>Логин:</strong> <span th:text="${client.login}"/></p>
+        <p><strong>Телефон:</strong> <span th:text="${client.phone}"/></p>
+        <p><strong>Паспортные данные:</strong> <span th:text="${client.passportData}"/></p>
     </div>
-  </div>
+    <div th:if="${#lists.isEmpty(clients)}">Клиенты не найдены.</div>
+</div>
 
 </body>
 </html>

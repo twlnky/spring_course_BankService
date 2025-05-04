@@ -2,7 +2,7 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${'Сотрудники банка ' + bankCode}">Сотрудники</title>
+    <title th:text="${'Сотрудники банка ' + bank.name}">Сотрудники</title>
     <link rel="icon" href="data:,">
     <style>
         :root {
@@ -55,7 +55,7 @@
 
 <a th:href="@{/admin/index/view/{code}(code=${bankCode})}" class="back-btn">← Назад к банку</a>
 
-<h1>Сотрудники банка <span th:text="${bankCode}"/></h1>
+<h1>Сотрудники банка <span th:text="${bank.name}"/></h1>
 
 <div class="employees-container">
     <div th:each="emp : ${employees}" class="employee-card">
@@ -70,7 +70,6 @@
     </div>
     <div th:if="${#lists.isEmpty(employees)}">Сотрудники не найдены.</div>
 </div>
-
 
 
 </body>

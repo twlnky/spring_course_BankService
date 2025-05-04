@@ -10,13 +10,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-//MiddleWare
-// () -> () -> () -> endPoint
-// () <- () <- () <- endPoint
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -28,7 +24,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http){
         return http
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(form ->
                         form.loginPage("/auth/login")
                         .loginProcessingUrl("/auth/login/process")
@@ -39,9 +35,16 @@ public class SecurityConfig {
                         requests ->
                                 requests.requestMatchers("/auth/**","/css/**","/js/**","/img/**","/access_denied")
                                         .permitAll()
-                                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                                        .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
-                                        .requestMatchers("/client/**").hasAuthority("CLIENT")
+
+                                        .requestMatchers("/admin/**")
+                                            .hasAuthority("ADMIN")
+
+                                        .requestMatchers("/employee/**")
+                                            .hasAuthority("EMPLOYEE")
+
+                                        .requestMatchers("/client/**")
+                                            .hasAuthority("CLIENT")
+
                                         .anyRequest()
                                         .authenticated()
                 ).exceptionHandling(handler ->

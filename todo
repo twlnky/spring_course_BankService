@@ -5,9 +5,9 @@
 - /banks/update/{id} - GET/POST | DONE
 - /banks/delete/{id} - POST     | DONE
 - /banks/{id} - GET             | DONE (TO DO: GET ATMS BY BANK, GET EMPLOYEE BY BANK) DONE
-- /banks/{id}/clients           | TODO: SEARCH AND PAGINATION //DONE
-- /banks/{id}/atms              | TODO: CREATE, UPDATE, DELETE //DONE
-- /banks/{id}/employee          | TODO: CREATE -> /employee/create, UPDATE -> /employee/update, DELETE //DONE
+- /banks/{id}/clients           | TODO: SEARCH AND PAGINATION DONE
+- /banks/{id}/atms              | TODO: CREATE, UPDATE, DELETE DONE
+- /banks/{id}/employee          | TODO: CREATE -> /employee/create, UPDATE -> /employee/update, DELETE DONE
 
 
 - /employee/create - GET/POST        |
@@ -22,23 +22,23 @@
 
 
 2. Client Page
-- account list
-- create account and card
-- close account
-- client information
-- support tickets
+- account list            | DONE
+- create account and card | DONE
+- close account           | DONE
+- client information      | DONE
+- support tickets         | DONE
 
 3. Client Support Page
-- create ticket
-- list opened tickets
+- create ticket           |DONE
+- list opened tickets     |DONE
 
 4. Ticket Chat Page
-- chat
-- close ticket button
+- chat                    | DONE
+- close ticket button     | DONE(Dont work)
 
 5. ATM Page
-- Balance
-- Transaction Operations
+- Balance                 |
+- Transaction Operations  |
 
 6. Employee Page
-- Opened Tickets
+- Opened Tickets          | DONE

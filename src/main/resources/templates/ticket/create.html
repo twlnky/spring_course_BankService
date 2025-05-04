@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Новый запрос в техподдержку</title>
+  <link rel="icon" href="data:,">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; }
+    form { max-width: 600px; margin: auto; display: flex; flex-direction: column; gap: 1rem; }
+    textarea { width: 100%; height: 150px; padding: .5rem; font-size: 1rem; }
+    .error { color: red; font-size: .9rem; }
+    button { background: #1db954; color: #fff; border: none; padding: .75rem; cursor: pointer; }
+    button:hover { background: #1a7340; }
+  </style>
+</head>
+<body>
+<h1>Создать запрос в техподдержку</h1>
+<form th:action="@{/tickets/create}" th:object="${ticketDto}" method="post">
+  <label for="description">Описание проблемы:</label>
+  <textarea id="description" th:field="*{description}" placeholder="Опишите, в чем проблема…"></textarea>
+  <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+
+  <button type="submit">Создать и перейти в чат</button>
+</form>
+</body>
+</html>

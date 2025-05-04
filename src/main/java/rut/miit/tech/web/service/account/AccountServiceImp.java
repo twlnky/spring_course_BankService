@@ -4,11 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rut.miit.tech.web.domain.model.Account;
+import rut.miit.tech.web.domain.model.Client;
+import rut.miit.tech.web.domain.model.SupportTicket;
 import rut.miit.tech.web.repository.AccountRepository;
-import rut.miit.tech.web.service.util.FilterUnit;
-import rut.miit.tech.web.service.util.PageResult;
-import rut.miit.tech.web.service.util.QueryBuilder;
-import rut.miit.tech.web.service.util.SortUnit;
+import rut.miit.tech.web.service.util.*;
 
 import java.util.List;
 
@@ -31,6 +30,12 @@ public class AccountServiceImp implements AccountService{
     }
 
     @Override
+    public PageResult<List<Account>> getAll(int page, int pageSize, CriteriaFilter<Account> filter, SortUnit sort) {
+        return PageResult.of(queryBuilder.getAll(page, pageSize, filter, sort, Account.class),
+                queryBuilder.getPageCount(pageSize, filter, Account.class));
+    }
+
+    @Override
     public Account create(Account card) {
         return accountRepository.save(card);
     }
@@ -44,4 +49,5 @@ public class AccountServiceImp implements AccountService{
     public void delete(Long id) {
         accountRepository.deleteById(id);
     }
+
 }

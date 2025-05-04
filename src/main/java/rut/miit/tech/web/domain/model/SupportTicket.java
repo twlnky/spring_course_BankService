@@ -38,4 +38,15 @@ public class SupportTicket {
 
     @Column(name = "closed_date")
     private Date closedDate;
+
+    @Override
+    public String toString() {
+        return "SupportTicket{" +
+                "id=" + id +
+                ", createdDate=" + createdDate +
+                ", status='" + status + '\'' +
+                ", description='" + description + '\'' +
+                ", closedDate=" + closedDate +
+                '}';
+    }
 }

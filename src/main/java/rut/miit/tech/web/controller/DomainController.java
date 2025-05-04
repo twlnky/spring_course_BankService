@@ -17,10 +17,10 @@ public class DomainController {
             redirectUrl = "/admin";
         }
         else if(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("CLIENT"))) {
-            redirectUrl = "/client";
+            redirectUrl = "/clients";
         }
         else if(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("EMPLOYEE"))) {
-            redirectUrl = "/employee";
+            redirectUrl = "/employees";
         }
         return "redirect:" + redirectUrl;
     }

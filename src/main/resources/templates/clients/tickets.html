@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Мои запросы</title>
+  <link rel="icon" href="data:,">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 2rem;}
+    h1 { margin-bottom: 1rem; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    th, td { padding: .75rem; border-bottom: 1px solid #ddd; text-align: left; }
+    th { background: #1db954; color: #fff; }
+    tr:last-child td { border-bottom: none; }
+    a.btn { display: inline-block; margin-top: 1rem; padding: .5rem 1rem; background: #1db954; color: #fff; text-decoration: none; border-radius: 4px; }
+    a.btn:hover { background: #1a7340; }
+  </style>
+</head>
+<body>
+<h1>Мои запросы в техподдержку</h1>
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Дата создания</th>
+    <th>Статус</th>
+    <th>Описание</th>
+    <th>Действие</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="t : ${tickets}">
+    <td th:text="${t.id}"></td>
+    <td th:text="${#dates.format(t.createdDate, 'dd.MM.yyyy HH:mm')}"></td>
+    <td th:text="${t.status}"></td>
+    <td th:text="${t.description.length() > 50 ? t.description.substring(0,50) + '…' : t.description}"></td>
+    <td>
+      <a th:href="@{/tickets/{id}/chat(id=${t.id})}">Перейти в чат</a>
+    </td>
+  </tr>
+  <tr th:if="${#lists.isEmpty(tickets)}">
+    <td colspan="5" style="text-align:center; padding: 1rem;">У вас нет созданных запросов.</td>
+  </tr>
+  </tbody>
+</table>
+
+<a href="/clients" class="btn">← Назад в кабинет</a>
+</body>
+</html>
