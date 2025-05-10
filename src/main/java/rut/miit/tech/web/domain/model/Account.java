@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "account")
@@ -25,8 +27,14 @@ public class Account {
     @Column(nullable = false, length = 50)
     private String type;
 
+    @Column(name = "is_blocked", nullable = false)
+    private boolean isBlocked;
+
     @Column(name = "open_date", nullable = false)
     private Date openDate;
+
+    @Column(name="balance", nullable = false, precision = 15, scale = 2)
+    private BigDecimal balance;
 
     @ManyToOne
     @JoinColumn(name = "bank_code", nullable = false)

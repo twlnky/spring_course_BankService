@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -16,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class Bank {
+
     @Id
     @Column(name = "code", length = 20)
     private String code;
@@ -40,18 +40,18 @@ public class Bank {
     private List<Employee> employees = new ArrayList<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "bank")
+    @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL)
     private List<Client> clients = new ArrayList<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "bank")
+    @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL)
     private List<Atm> atms = new ArrayList<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "bank")
+    @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL)
     private List<Account> accounts = new ArrayList<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "bank")
+    @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL)
     private List<Card> cards = new ArrayList<>();
 }

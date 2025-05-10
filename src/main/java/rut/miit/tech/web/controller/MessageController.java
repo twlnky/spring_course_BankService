@@ -25,19 +25,6 @@ import java.util.List;
 public class MessageController {
     private final MessageService messageService;
     private final DtoConverter dtoConverter;
-    //TODO
-    // 1. GetLastMessagesWithPagination id = 200  id < 200
-    // 3. PostMessage
-    // 4. GetPollingMessages  id = 204 id > 204
-
-
-    // - 3
-    // - 2
-    // - 1
-    // LastMessage id=200
-    // + 1
-    // + 2
-    // +
 
     @GetMapping("/{chat_id}/history")
     public List<MessageDTO> getHistoryMessages(@PathVariable("chat_id") Long chatId,
@@ -48,7 +35,7 @@ public class MessageController {
                 cb.lessThan(root.get("id"),id),
                 cb.equal(root.get("ticket").get("id"),chatId)
         }, new SortUnit("sentDatetime", Order.DESC));
-        return pageResult.map((models) -> dtoConverter.toDto(models, MessageDTO.class)).getQueryResult().reversed();
+        return pageResult.map((models) -> dtoConverter.toDto(models, MessageDTO.class)).getQueryResult();
 
     }
 
@@ -62,8 +49,8 @@ public class MessageController {
         }, new SortUnit("sentDatetime", Order.DESC)),MessageDTO.class);
     }
 
-    @PostMapping("")
-    public MessageDTO postMessage(@RequestBody MessageDTO messageDTO,
+    @GetMapping("/post/message")
+    public MessageDTO postMessage(@ModelAttribute MessageDTO messageDTO,
                                   @AuthenticationPrincipal UserDetails userDetails) {
         Message message = new Message();
         message.setText(messageDTO.getText());

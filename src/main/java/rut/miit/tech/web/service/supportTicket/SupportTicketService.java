@@ -1,7 +1,6 @@
 package rut.miit.tech.web.service.supportTicket;
 
 
-import rut.miit.tech.web.domain.model.Client;
 import rut.miit.tech.web.domain.model.SupportTicket;
 import rut.miit.tech.web.service.util.CriteriaFilter;
 import rut.miit.tech.web.service.util.FilterUnit;

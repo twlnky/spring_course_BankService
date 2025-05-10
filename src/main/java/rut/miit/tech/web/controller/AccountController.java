@@ -13,6 +13,9 @@ import rut.miit.tech.web.service.util.Order;
 import rut.miit.tech.web.service.util.PageResult;
 import rut.miit.tech.web.service.util.SortUnit;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @Controller
@@ -84,4 +87,18 @@ public class AccountController {
         accountService.delete(id);
         return "redirect:/clients/account";
     }
+
+    @PostMapping("/{id}/changeblock")
+    public String updateAccountBlock(@PathVariable Long id,
+                                     @RequestParam("block") Boolean block){
+        accountService.updateBlock(id, block);
+        return "redirect:/clients/account";
+    }
+
+    @GetMapping("/create")
+    public String createAccount(Model model) {
+        model.addAttribute("account", new Account());
+        return "clients/account_create";
+    }
+
 }

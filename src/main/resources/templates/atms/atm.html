@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Банкомат</title>
+    <link rel="icon" href="data:,">
+    <style>
+        :root {
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --primary-color: #1db954;
+            --hover-color: #169d47;
+            --card-bg-color: #ffffff;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        [data-theme="dark"] {
+            --background-color: #121212;
+            --text-color: #f1f1f1;
+            --card-bg-color: #2c2c2c;
+            --card-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--hover-color);
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        h1 {
+            margin: 40px 0 20px;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .atm-details {
+            background-color: var(--card-bg-color);
+            box-shadow: 0 4px 12px var(--card-shadow);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .atm-details p {
+            font-size: 1.05rem;
+            margin: 12px 0;
+        }
+
+        .atm-details strong {
+            display: inline-block;
+            width: 200px;
+        }
+
+        @media (max-width: 600px) {
+            .atm-details {
+                padding: 20px;
+                margin: 0 10px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .atm-details strong {
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+<div class="theme-toggle" onclick="toggleTheme()">Сменить тему</div>
+<a th:href="@{/admin/index/{bankCode}/atms(code=${bankCode})}" class="back-btn">← Назад к банкоматам</a>
+
+<h1>Детали банкомата <span th:text="${atm.code}"></span></h1>
+
+<div class="atm-details">
+    <p><strong>Код:</strong> <span th:text="${atm.code}"></span></p>
+    <p><strong>Адрес:</strong> <span th:text="${atm.address}"></span></p>
+    <p><strong>Статус:</strong> <span th:text="${atm.status}"></span></p>
+    <p><strong>Установлен:</strong> <span th:text="${#dates.format(atm.installationDate, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+    <p><strong>Последнее обслуживание:</strong> <span th:text="${#dates.format(atm.lastServiceDate, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+</div>
+
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    }
+</script>
+
+</body>
+</html>

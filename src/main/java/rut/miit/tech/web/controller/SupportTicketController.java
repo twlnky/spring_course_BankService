@@ -1,12 +1,16 @@
 package rut.miit.tech.web.controller;
 
 import jakarta.persistence.criteria.Predicate;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import rut.miit.tech.web.domain.dto.SupportTicketDTO;
 import rut.miit.tech.web.domain.model.*;
 import rut.miit.tech.web.service.messege.MessageService;
@@ -14,9 +18,10 @@ import rut.miit.tech.web.service.supportTicket.SupportTicketService;
 import rut.miit.tech.web.service.util.Order;
 import rut.miit.tech.web.service.util.PageResult;
 import rut.miit.tech.web.service.util.SortUnit;
+
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RequestMapping("/tickets")
@@ -29,7 +34,8 @@ public class SupportTicketController {
     @GetMapping("/{id}/chat")
     public String getChatPage(@PathVariable Long id,
                               Model model,
-                              @AuthenticationPrincipal UserDetails userDetails) {
+                              @AuthenticationPrincipal UserDetails userDetails,
+                              HttpServletRequest request) {
 
         PageResult<List<Message>> result =
                 messageService.getAll(0,10,(cb, root) -> new Predicate[]{
@@ -51,7 +57,6 @@ public class SupportTicketController {
             model.addAttribute("isClient",true);
         }
 
-
         return "ticket/chat";
     }
 
@@ -70,7 +75,7 @@ public class SupportTicketController {
         supportTicket.setDescription(ticketDto.getDescription());
         supportTicket.setStatus("true"); // желательно заменить на enum в будущем
         supportTicket.setClient(client);
-        supportTicket.setCreatedDate(new Date());
+        supportTicket.setCreatedDate(Timestamp.from(Instant.now()));
 
 
         SupportTicket savedTicket = supportTicketService.create(supportTicket);
@@ -81,7 +86,7 @@ public class SupportTicketController {
         message.setText(ticketDto.getDescription());
         message.setSenderClient(client);
         message.setStatus("true");
-        supportTicket.setCreatedDate(Date.from(Instant.ofEpochSecond(System.currentTimeMillis())));
+        //supportTicket.setCreatedDate(Date.from(Instant.ofEpochSecond(System.currentTimeMillis())));
 
 
         messageService.create(message);

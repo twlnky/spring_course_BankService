@@ -10,15 +10,15 @@
 - /banks/{id}/employee          | TODO: CREATE -> /employee/create, UPDATE -> /employee/update, DELETE DONE
 
 
-- /employee/create - GET/POST        |
-- /employee/update/{id} - GET/POST   |
-- /employee/delete/{id} - POST       |
-- /employee/{id} - GET               |
+- /employee/create - GET/POST        | 10.05 DONE (FIXME need to fix redirection and mapping)
+- /employee/update/{id} - GET/POST   | 10.05 DONE (FIXME need to fix redirection and mapping)
+- /employee/delete/{id} - POST       | 10.05 DONE (FIXME need to fix redirection and mapping)
+- /employee/{id} - GET               | 10.05 DONE (FIXME need to fix redirection and mapping)
 
-- /atms/create - GET/POST            |
-- /atms/update/{id} - GET/POST       |
-- /atms/delete/{id} - POST           |
-- /atms/{id} - GET                   |
+- /atms/create - GET/POST            | DONE (FIXME need to fix redirection and mapping)
+- /atms/update/{id} - GET/POST       | DONE (FIXME need to fix redirection and mapping)
+- /atms/delete/{id} - POST           | DONE (FIXME need to fix redirection and mapping)
+- /atms/{id} - GET                   | DONE  (FIXME need to fix redirection and mapping)
 
 
 2. Client Page
@@ -33,12 +33,12 @@
 - list opened tickets     |DONE
 
 4. Ticket Chat Page
-- chat                    | DONE
-- close ticket button     | DONE(Dont work)
+- chat                    | DONE (FIX DATE)
+- close ticket button     | NEED TO FIX
+
+
 
 5. ATM Page
-- Balance                 |
-- Transaction Operations  |
-
-6. Employee Page
-- Opened Tickets          | DONE
+- atm - GET| POST -> /operations | validation errors | process result
+7. Setup Access Config -> @PreAuthorize and securityConfig
+8. Hard sql query from readme

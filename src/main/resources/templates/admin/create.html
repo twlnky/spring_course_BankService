@@ -108,7 +108,7 @@
   <h2>Создание банка</h2>
 
   <form th:object="${bank}" th:action="@{/admin/index/create}" th:method="post">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
 
     <div class="error-container" th:if="${#fields.hasGlobalErrors()}">
       <div th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>

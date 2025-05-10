@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rut.miit.tech.web.domain.model.Atm;
-import rut.miit.tech.web.domain.model.Client;
 import rut.miit.tech.web.repository.AtmRepository;
 import rut.miit.tech.web.service.util.*;
 

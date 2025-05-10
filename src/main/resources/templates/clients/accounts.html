@@ -182,6 +182,10 @@
               onsubmit="return confirm('Удалить?');" style="display:inline;">
           <button type="submit">Удалить</button>
         </form>
+        <form th:action="${'/clients/account/'+acc.id+'/changeblock?block=' + !acc.blocked }" method="post"
+              onsubmit="return confirm('Confirm action');" style="display:inline;">
+          <button type="submit" th:text="${acc.blocked ? 'Unblock':'Block'}"></button>
+        </form>
       </td>
     </tr>
     </tbody>

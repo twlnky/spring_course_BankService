@@ -155,8 +155,10 @@
   <input id="chat_input" type="text" placeholder="Введите сообщение...">
   <button class="send-button" onclick="sentMessage()">Отправить</button>
 </div>
+<data id="_csrf" th:value="${_csrf}"></data>
 
 <script>
+
   axios.defaults.withCredentials = true;
 
   function toggleTheme() {
@@ -172,14 +174,16 @@
     const chatId = document.getElementById("chat_id").value;
     const lastMessageId = document.getElementById("last_message_id").value;
     let currentPage = Number.parseInt(document.getElementById("page").value);
-    currentPage++;
-    axios.get(`/messages/${chatId}/history?id=${lastMessageId}`)
+
+    axios.get(`/messages/${chatId}/history?id=${lastMessageId}&page=${currentPage}`)
             .then(res => {
+              currentPage++;
               document.getElementById("page").value = currentPage;
-              if (Number.parseInt(document.getElementById("page_count").value) === currentPage) {
+              if (Number.parseInt(document.getElementById("page_count").value) - 1 === currentPage) {
                 document.getElementById("load_more_button").style.display = "none";
               }
               res.data.forEach(message => appendMessage(message, true));
+
             });
   }
 
@@ -189,10 +193,7 @@
     if (message.length === 0) return;
 
     const chatId = document.getElementById("chat_id").value;
-    axios.post(`/messages`, {
-      ticketId: chatId,
-      text: message
-    }).then(res => {
+    axios.get(`/messages/post/message?text=${message}&ticketId=${chatId}`).then(res => {
       input.value = '';
       document.getElementById("last_accepted_id").value = res.data.id;
 

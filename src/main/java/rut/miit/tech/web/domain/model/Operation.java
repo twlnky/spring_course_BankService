@@ -27,14 +27,19 @@ public class Operation {
     @Column(name = "operation_time", nullable = false)
     private Time operationTime;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String type;
+    private OperationType type;
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal commission;
+
+    @ManyToOne
+    @JoinColumn(name = "card_id")
+    private Card card;
 
     @ManyToOne
     @JoinColumn(name = "atm_code")

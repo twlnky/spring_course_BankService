@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rut.miit.tech.web.domain.model.Card;
 import rut.miit.tech.web.domain.model.Client;
 import rut.miit.tech.web.repository.ClientRepository;
 import rut.miit.tech.web.service.util.*;

@@ -17,8 +17,6 @@ import rut.miit.tech.web.domain.util.validation.ClientRegistrationValidator;
 import rut.miit.tech.web.service.bank.BankService;
 import rut.miit.tech.web.service.client.ClientService;
 
-import java.sql.Timestamp;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Controller

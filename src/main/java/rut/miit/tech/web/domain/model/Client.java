@@ -2,12 +2,8 @@ package rut.miit.tech.web.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "client")

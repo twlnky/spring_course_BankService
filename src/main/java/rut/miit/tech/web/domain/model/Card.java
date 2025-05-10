@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "card")
@@ -25,6 +26,9 @@ public class Card {
     @Column(name = "issue_date", nullable = false)
     private Date issueDate;
 
+    @Column(name = "is_blocked", nullable = false)
+    private boolean isBlocked;
+
     @Column(name = "expiration_date", nullable = false)
     private Date expirationDate;
 
@@ -39,6 +43,9 @@ public class Card {
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "card")
+    private List<Operation> operations;
 
     @Column(name = "binding_date", nullable = false)
     private Date bindingDate;

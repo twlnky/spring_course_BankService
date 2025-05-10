@@ -1,11 +1,8 @@
 package rut.miit.tech.web.service.employee;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rut.miit.tech.web.domain.model.Card;
-import rut.miit.tech.web.domain.model.Client;
 import rut.miit.tech.web.domain.model.Employee;
 import rut.miit.tech.web.repository.EmployeeRepository;
 import rut.miit.tech.web.service.util.*;

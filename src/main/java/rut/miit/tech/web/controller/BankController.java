@@ -1,11 +1,11 @@
 package rut.miit.tech.web.controller;
 
 import jakarta.persistence.criteria.Predicate;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import rut.miit.tech.web.domain.model.Atm;
 import rut.miit.tech.web.domain.model.Bank;
@@ -15,7 +15,9 @@ import rut.miit.tech.web.service.atm.AtmService;
 import rut.miit.tech.web.service.bank.BankService;
 import rut.miit.tech.web.service.client.ClientService;
 import rut.miit.tech.web.service.employee.EmployeeService;
-import rut.miit.tech.web.service.util.*;
+import rut.miit.tech.web.service.util.Order;
+import rut.miit.tech.web.service.util.PageResult;
+import rut.miit.tech.web.service.util.SortUnit;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -169,7 +171,6 @@ public class BankController {
     }
 
 
-
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("bank", new Bank());
@@ -179,7 +180,7 @@ public class BankController {
 
     @PostMapping("/create")
     public String processCreateForm(
-            @Valid @ModelAttribute("bank") Bank bank,
+            @Validated @ModelAttribute("bank") Bank bank,
             BindingResult result) {
 
         if (result.hasErrors()) {
@@ -197,5 +198,119 @@ public class BankController {
         return "redirect:/admin/index";
     }
 
+    // 1) Форма создания нового сотрудника
+    @GetMapping("/{code}/employees/create")
+    public String showCreateEmployeeForm(
+            @PathVariable("code") String code,
+            Model model) {
+        model.addAttribute("bankCode", code);
+        model.addAttribute("bank", bankService.getById(code));
+        model.addAttribute("employee", new Employee());
+        return "employees/create";   // шаблон: src/main/resources/templates/employees/create.html
+    }
+
+    // 2) Создание
+    @PostMapping("/{code}/employees/create")
+    public String doCreateEmployee(
+            @PathVariable("code") String code,
+            @ModelAttribute Employee employee) {
+        Bank bank = bankService.getById(code);
+        employee.setBank(bank);
+        employeeService.create(employee);
+        return "redirect:/admin/index/" + code + "/employees";
+    }
+
+    // 3) Форма редактирования
+    @GetMapping("/{code}/employees/{id}/edit")
+    public String showEditEmployeeForm(
+            @PathVariable("code") String code,
+            @PathVariable("id") Long id,
+            Model model) {
+        model.addAttribute("bankCode", code);
+        model.addAttribute("banks", bankService.getById(code));
+        model.addAttribute("employee", employeeService.getById(id));
+        return "employees/update";   // шаблон: employees/update.html
+    }
+
+    // 4) Обновление
+    @PostMapping("/{code}/employees/{id}/edit")
+    public String doEditEmployee(
+            @PathVariable("code") String code,
+            @PathVariable("id") Long id,
+            @ModelAttribute Employee employee) {
+        employee.setId(id);
+        employee.setBank(bankService.getById(code));
+        employeeService.update(employee);
+        return "redirect:/admin/index/" + code + "/employees";
+    }
+
+    // 5) Удаление
+    @PostMapping("/{code}/employees/{id}/delete")
+    public String doDeleteEmployee(
+            @PathVariable("code") String code,
+            @PathVariable("id") Long id) {
+        employeeService.delete(id);
+        return "redirect:/admin/index/" + code + "/employees";
+    }
+
+    // 6) Просмотр одного сотрудника (опционально; если нужен)
+    @GetMapping("/{code}/employees/{id}")
+    public String viewEmployee(
+            @PathVariable("code") String code,
+            @PathVariable("id") Long id,
+            Model model) {
+        model.addAttribute("bankCode", code);
+        model.addAttribute("bank", bankService.getById(code));
+        model.addAttribute("employee", employeeService.getById(id));
+        return "employees/view";     // шаблон: employees/view.html
+    }
+
+    @GetMapping("/{bankCode}/atms/create")
+    public String createAtmForm(@PathVariable String bankCode, Model model) {
+        model.addAttribute("atm", new Atm());
+        model.addAttribute("bankCode", bankCode);
+        return "atms/create";
+    }
+
+    @PostMapping("/{bankCode}/atms/create")
+    public String createAtm(@PathVariable String bankCode, @ModelAttribute Atm atm) {
+        Bank bank = bankService.getById(bankCode);
+        atm.setBank(bank);
+        atm.setInstallationDate(new Timestamp(System.currentTimeMillis()));
+        atmService.create(atm);
+        return "redirect:/admin/index/" + bankCode + "/atms";
+    }
+
+    @GetMapping("/{bankCode}/atms/update/{id}")
+    public String updateAtmForm(@PathVariable String bankCode, @PathVariable String id, Model model) {
+        Atm atm = atmService.getByCode(id);
+        model.addAttribute("atm", atm);
+        model.addAttribute("bankCode", bankCode);
+        return "atms/update";
+    }
+
+    @PostMapping("/{bankCode}/atms/update/{id}")
+    public String updateAtm(@PathVariable String bankCode, @PathVariable String id,
+                            @ModelAttribute("atm") Atm updatedAtm) {
+        Atm atm = atmService.getByCode(id);
+        atm.setStatus(updatedAtm.getStatus());
+        atm.setLastServiceDate(new Timestamp(System.currentTimeMillis()));
+        atmService.update(atm);
+        return "redirect:/admin/index/" + bankCode + "/atms";
+    }
+
+    @PostMapping("/{bankCode}/atms/delete/{id}")
+    public String deleteAtm(@PathVariable String bankCode, @PathVariable String id) {
+        atmService.delete(id);
+        return "redirect:/admin/index/" + bankCode + "/atms";
+    }
+
+    @GetMapping("/{bankCode}/atms/{id}")
+    public String getAtm(@PathVariable String bankCode, @PathVariable String id, Model model) {
+        Atm atm = atmService.getByCode(id);
+        model.addAttribute("atm", atm);
+        model.addAttribute("bankCode", bankCode);
+        return "atms/atm";
+    }
 
 }

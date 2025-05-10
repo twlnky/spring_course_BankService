@@ -1,76 +1,174 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title th:text="${'Сотрудники банка ' + bank.name}">Сотрудники</title>
-    <link rel="icon" href="data:,">
+    <meta charset="UTF-8" />
+    <title th:text="'Сотрудники банка ' + ${bank.name}">Сотрудники</title>
+    <link rel="icon" href="data:," />
     <style>
-        :root {
-            --background-color: #ffffff;
-            --text-color: #333333;
-            --primary-color: #1db954;
-            --primary-color-hover: #1a7340;
-            --container-bg-color: #f0f0f0;
-            --card-bg-color: #ffffff;
-            --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
         body {
             font-family: Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            background-color: var(--bg-color, #ffffff);
+            color: var(--text-color, #000000);
+            margin: 0;
             padding: 20px;
         }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --card-bg: #1e1e1e;
+            --card-border: #333333;
+            --button-bg: #333333;
+            --button-text: #ffffff;
+            --button-hover: #444444;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --card-bg: #f9f9f9;
+            --card-border: #dddddd;
+            --button-bg: #e0e0e0;
+            --button-text: #000000;
+            --button-hover: #d5d5d5;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            padding: 10px 20px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--button-hover);
+        }
+
         .back-btn {
             display: inline-block;
             margin-bottom: 20px;
-            padding: 8px 12px;
-            background-color: var(--primary-color);
-            color: white;
+            color: var(--text-color);
             text-decoration: none;
-            border-radius: 4px;
+            font-weight: bold;
         }
-        .back-btn:hover {
-            background-color: var(--primary-color-hover);
+
+        h1 {
+            margin-bottom: 20px;
         }
+
         .employees-container {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
+
         .employee-card {
-            background-color: var(--card-bg-color);
-            box-shadow: var(--card-shadow);
-            border-radius: 6px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
             padding: 15px;
+            width: 300px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+
         .employee-card p {
             margin: 5px 0;
         }
-        .pagination {
-            margin-top: 20px;
+
+        .employee-card a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .employee-card a:hover {
+            text-decoration: underline;
+        }
+
+        .employee-card form {
+            display: inline;
+        }
+
+        .employee-card button {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .employee-card button:hover {
+            background-color: var(--button-hover);
+        }
+
+        .pagination-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .pagination-container button {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            margin: 0 5px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pagination-container button.active {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .pagination-container button:hover {
+            background-color: var(--button-hover);
         }
     </style>
 </head>
-<body>
-
+<body data-theme="light">
+<div class="theme-toggle" onclick="toggleTheme()">Переключить тему</div>
 <a th:href="@{/admin/index/view/{code}(code=${bankCode})}" class="back-btn">← Назад к банку</a>
 
-<h1>Сотрудники банка <span th:text="${bank.name}"/></h1>
+<h1>Сотрудники банка <span th:text="${bank.name}"></span></h1>
 
 <div class="employees-container">
-    <div th:each="emp : ${employees}" class="employee-card">
-        <p><strong>Логин:</strong> <span th:text="${emp.login}"/></p>
-        <p><strong>Банк:</strong> <span th:text="${emp.bank.name}"/></p>
-        <p><strong>ФИО:</strong> <span th:text="${emp.fullName}"/></p>
-        <p><strong>Дата найма:</strong>
-            <span th:text="${#dates.format(emp.hireDate,'yyyy-MM-dd HH:mm:ss')}"/>
-        </p>
-        <p><strong>ID:</strong> <span th:text="${emp.id}"/></p>
-        <p><strong>Должность:</strong> <span th:text="${emp.position}"/></p>
+    <div th:each="employee : ${employees}" class="employee-card">
+        <p><strong>ID:</strong> <span th:text="${employee.id}"></span></p>
+        <p><strong>ФИО:</strong> <span th:text="${employee.fullName}"></span></p>
+        <p><strong>Должность:</strong> <span th:text="${employee.position}"></span></p>
+        <p><strong>Дата назначения:</strong> <span th:text="${employee.hireDate}"></span></p>
+        <p><strong>Логин:</strong> <span th:text="${employee.login}"></span></p>
+        <div>
+            <a th:href="@{/admin/index/{code}/employees/{id}(code=${bankCode}, id=${employee.id})}">Просмотр</a> |
+            <a th:href="@{/admin/index/{code}/employees/{id}/edit(code=${bankCode}, id=${employee.id})}">Редактировать</a> |
+            <form th:action="@{/admin/index/{code}/employees/{id}/delete(code=${bankCode}, id=${employee.id})}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить этого сотрудника?')">Удалить</button>
+            </form>
+        </div>
     </div>
     <div th:if="${#lists.isEmpty(employees)}">Сотрудники не найдены.</div>
 </div>
 
+<div class="pagination-container">
+    <button th:each="i : ${#numbers.sequence(0, pageCount - 1)}"
+            th:classappend="${i == currentPage} ? 'active' : ''"
+            th:text="${i + 1}"
+            th:onclick="'window.location.href=\'?page=' + i + '\';'">
+    </button>
+</div>
 
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        html.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+    }
+</script>
 </body>
 </html>

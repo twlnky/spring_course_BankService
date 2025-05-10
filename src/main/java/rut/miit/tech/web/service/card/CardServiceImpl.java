@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rut.miit.tech.web.domain.exception.ResourceNotFountException;
 import rut.miit.tech.web.domain.model.Card;
-import rut.miit.tech.web.domain.model.Client;
 import rut.miit.tech.web.repository.CardRepository;
 import rut.miit.tech.web.service.util.*;
 
@@ -40,7 +39,7 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Card getById(Long id) {
-        return cardRepository.findById(id).orElseThrow(ResourceNotFountException::new);
+        return cardRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     @Override

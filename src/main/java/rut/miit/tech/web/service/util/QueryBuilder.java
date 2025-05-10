@@ -8,8 +8,6 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import rut.miit.tech.web.domain.model.Card;
-import rut.miit.tech.web.service.card.CardSort;
 
 import java.util.ArrayList;
 import java.util.List;

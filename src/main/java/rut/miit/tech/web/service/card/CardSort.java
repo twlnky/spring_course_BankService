@@ -2,7 +2,6 @@ package rut.miit.tech.web.service.card;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor

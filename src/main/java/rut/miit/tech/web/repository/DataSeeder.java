@@ -2,6 +2,7 @@ package rut.miit.tech.web.repository;
 
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -22,6 +23,7 @@ import java.util.Random;
 @Profile("dev")
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class DataSeeder implements CommandLineRunner {
     private final ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,12 +46,17 @@ public class DataSeeder implements CommandLineRunner {
         try {
             Faker faker = new Faker(new Locale("en"));
 
-
-
-
+            messageRepository.deleteAll();
+            supportTicketRepository.deleteAll();
+            operationRepository.deleteAll();
+            cardRepository.deleteAll();
+            accountRepository.deleteAll();
+            employeeRepository.deleteAll();
+            atmRepository.deleteAll();
             bankRepository.deleteAll();
             clientRepository.deleteAll();
 
+            Random random = new Random();
             for (int i = 0; i < testRecords; i++) {
                 Bank bank = new Bank();
                 bank.setRegistrationDate(Timestamp.from(Instant.now()));
@@ -65,9 +72,6 @@ public class DataSeeder implements CommandLineRunner {
                 client.setPassportData(faker.numerify("#### ######"));
                 client.setPassword(passwordEncoder.encode(String.valueOf(i)));
                 String clientPhone = faker.phoneNumber().phoneNumber();
-                if (clientPhone.length() > 20) {
-                    clientPhone = clientPhone.substring(0, 20);
-                }
                 client.setPhone(clientPhone);
                 client.setEmail(faker.internet().emailAddress());
                 client.setEnable(true);
@@ -77,7 +81,11 @@ public class DataSeeder implements CommandLineRunner {
                 client.setBank(bank);
                 client = clientRepository.save(client);
 
+
+
+
                 Atm atm = new Atm();
+
                 atm.setBank(bank);
                 atm.setCode(faker.internet().password(1,19));
                 atm.setAddress(faker.address().fullAddress());
@@ -86,7 +94,12 @@ public class DataSeeder implements CommandLineRunner {
                 atm.setInstallationDate(Timestamp.from(Instant.now()));
                 atm = atmRepository.save(atm);
 
+
+                BigDecimal balance = BigDecimal.valueOf(10000 - random.nextInt() %  5000);
+
+
                 Account account = new Account();
+                account.setBalance(balance);
                 account.setBank(bank);
                 account.setClient(client);
                 account.setAccountNumber(faker.numerify("#### ######"));
@@ -137,17 +150,17 @@ public class DataSeeder implements CommandLineRunner {
                 message = messageRepository.save(message);
 
                 Operation operation = new Operation();
-                operation.setType(faker.business().creditCardType());
+                operation.setType(random.nextBoolean() ? OperationType.DEPOSIT : OperationType.WITHDRAW);
                 operation.setOperationDate(Timestamp.from(Instant.now()));
                 operation.setOperationTime(Time.valueOf(LocalTime.of(12, 23)));
                 operation.setAmount(BigDecimal.valueOf(Double.parseDouble(String.valueOf(faker.number().randomDouble(2, 100, 1000)))));
                 operation.setCommission(BigDecimal.valueOf(Double.parseDouble(String.valueOf(faker.number().randomDouble(2, 1, 10)))));
                 operation.setAtm(atm);
+                operation.setCard(card);
                 operation = operationRepository.save(operation);
-
-
-
-
+                log.info("Operations count with account - {}: {}",account.getId(), operationRepository.findAllByAccount(account.getId()).size());
+                log.info("Summary clients balance with id - {}:{} ",client.getId(),clientRepository.getSummaryBalanceByClientId(client.getId()));
+                log.info("Ticket count by bank code - {}: {}",bank.getCode(),supportTicketRepository.findAllByBankCode(bank.getCode()).size());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -1,6 +1,5 @@
 package rut.miit.tech.web.service.client;
 
-import rut.miit.tech.web.domain.model.Card;
 import rut.miit.tech.web.domain.model.Client;
 import rut.miit.tech.web.service.util.CriteriaFilter;
 import rut.miit.tech.web.service.util.FilterUnit;

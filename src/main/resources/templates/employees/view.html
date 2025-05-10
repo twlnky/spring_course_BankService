@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Просмотр сотрудника</title>
+  <link rel="icon" href="data:,">
+  <!-- Стили и скрипт из index.html -->
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">Сменить тему</button>
+<div class="container">
+  <h1 th:text="${employee.fullName}">ФИО</h1>
+  <div class="card">
+    <p><strong>ID:</strong> <span th:text="${employee.id}"/></p>
+    <p><strong>Должность:</strong> <span th:text="${employee.position}"/></p>
+    <p><strong>Банк:</strong> <span th:text="${employee.bank.name}"/></p>
+  </div>
+  <a th:href="@{/employees}">← К списку</a>
+  <a th:href="@{/employees/{id}/edit(id=${employee.id})}" style="margin-left:10px">Редактировать</a>
+</div>
+</body>
+</html>

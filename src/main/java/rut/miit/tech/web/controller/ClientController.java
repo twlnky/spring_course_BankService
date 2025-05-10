@@ -77,7 +77,7 @@ public class ClientController {
     public String redirectToChat(@AuthenticationPrincipal ClientUserDetails userDetails) {
         Long clientId = userDetails.getClient().getId();
 
-        // Получаем открытые тикеты
+
         PageResult<List<SupportTicket>> ticketsPage = supportTicketService.getAll(
                 0,
                 1,
