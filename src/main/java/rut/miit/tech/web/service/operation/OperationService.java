@@ -1,6 +1,7 @@
 package rut.miit.tech.web.service.operation;
 
 
+import rut.miit.tech.web.domain.dto.OperationDTO;
 import rut.miit.tech.web.domain.model.Operation;
 import rut.miit.tech.web.domain.model.OperationResult;
 import rut.miit.tech.web.service.util.FilterUnit;

@@ -11,7 +11,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false
+      format_sql: true
+    show-sql: true
+
+logging:
+  level:
+
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+
+
 admin:
   password:
     1
@@ -19,7 +28,3 @@ admin:
 test:
   records:
     count: 13
-
-
-
-

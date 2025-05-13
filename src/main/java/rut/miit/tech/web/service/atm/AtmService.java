@@ -1,5 +1,6 @@
 package rut.miit.tech.web.service.atm;
 
+import rut.miit.tech.web.domain.dto.OperationDTO;
 import rut.miit.tech.web.domain.model.Atm;
 import rut.miit.tech.web.service.util.CriteriaFilter;
 import rut.miit.tech.web.service.util.FilterUnit;
@@ -15,4 +16,5 @@ public interface AtmService {
     Atm create(Atm card);
     Atm update(Atm card);
     void delete(String code);
+    String doOperation(OperationDTO dto) throws IllegalAccessException;
 }

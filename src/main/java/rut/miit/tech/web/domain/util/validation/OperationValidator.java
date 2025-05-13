@@ -24,8 +24,11 @@ public class OperationValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         OperationDTO dto = (OperationDTO) target;
+        if(dto.getType() == OperationType.CHECK_BALANCE){
+            return;
+        }
         if(dto.getAmount().doubleValue() <= 0){
-            errors.rejectValue("amount", "error.amount.negative","Amount must be positive");
+            errors.rejectValue("amount", "error.amount.negative","Сумма должна быть положительной");
             return;
         }
         if(dto.getType() == OperationType.DEPOSIT){
@@ -35,7 +38,7 @@ public class OperationValidator implements Validator {
         double opAmount = dto.getAmount().doubleValue();
         double diff = account.getBalance().doubleValue() - opAmount;
         if(diff < 0){
-            errors.rejectValue("amount", "error.amount.negative","Amount could not be more than account balance");
+            errors.rejectValue("amount", "error.amount.negative","Недостаточно средств для проведения операции");
         }
     }
 }

@@ -8,11 +8,11 @@
         :root {
             --bg: #f4f4f4; --fg: #333;
             --card: #fff; --accent: #1db954; --accent-hover: #1a7340;
-            --shadow: rgba(0,0,0,0.1);
+            --shadow: rgb(37, 36, 36);
         }
         [data-theme="dark"] {
             --bg:#121212; --fg:#e0e0e0; --card:#1f1f1f;
-            --shadow:rgba(0,0,0,0.5);
+            --shadow: rgba(35, 34, 34, 0.5);
         }
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:Arial,sans-serif;background:var(--bg);color:var(--fg);
@@ -67,6 +67,14 @@
                 <a href="/clients/update" class="btn">Редактировать профиль</a>
                 <a href="/clients/chat" class="btn">Чат поддержки</a>
                 <a href="/clients/tickets" class="btn">Мои запросы</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Операции через банкомат</h2>
+            <p>Снять или пополнить баланс по вашей карте.</p>
+            <div class="actions">
+                <a th:href="@{/atms/operations}" class="btn">Перейти к операциям</a>
             </div>
         </div>
 

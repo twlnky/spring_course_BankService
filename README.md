@@ -117,14 +117,14 @@
 **РА**  
 ```postgresql
 Create
-Добавить клиента и аккаунт              
+--Добавить клиента и аккаунт              
 {  W1 = (152, 'Иванов Иван', 'PASS123', 'SNILS-001', 'ivan@mail.com', 'ivanov', 'pass123', '+79990000000', '1990-01-01', 'B-001')
 Client ← Client ∪ W1
 Account ← Account ∪ { (1001, 'ACC-001', 'savings', CURRENT_DATE) x  π id, bank_code(W1)}  
 }
 
 Read
-Клиенты банка "B-001"           
+--Клиенты банка "B-001"           
 π full_name (σ bank_code='B-001'(Client))
 
 Сотрудники с >5 тикетов             
@@ -136,21 +136,21 @@ Read
     )
 )
 
-Активные карты с балансом >100K                 
+--Активные карты с балансом >100K                 
 π Card.type, Account.balance (
     σ binding_status='active' ∧ balance>100000 (
         Card ⋈ Account ⋈ Client
     )
 )
 
-Банки без клиентов                                  
+--Банки без клиентов                                  
 π code(Bank) − π bank_code(Client)
 
-Средняя комиссия по банкам                             
+--Средняя комиссия по банкам                             
 γ bank_code; AVG(fee)→avg_fee(Operation ⋈ ATM)
 
 Update 
-Обновить статус банкомата и дату обслуживания              
+--Обновить статус банкомата и дату обслуживания              
 old_atm ← σ_{code='ATM-045'}(ATM)
 new_atm ← π_{
     code,
@@ -160,7 +160,7 @@ new_atm ← π_{
     'out_of_service' → status,        
     bank_code
 }(old_atm)
-ATM ← (ATM − old_atm) ∪ new_atm
+ATM ← (ATM − old_atm) ∪ new_atm;
 
 Delete 
 Удаление клиента                  
@@ -213,8 +213,7 @@ PUT W
 {Bank.code | Bank(Bank) & ¬∃Client(Client.bank_code = Bank.code)}
 
 -- Средняя комиссия по банкам               
-RANGE Operation O
-RANGE ATM A
+RANGE Operation O, ATM A
 { Bank.code, AVG(O.fee) | 
     O(O) 
     & A(A) 

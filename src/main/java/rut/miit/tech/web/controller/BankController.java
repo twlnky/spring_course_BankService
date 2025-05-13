@@ -198,7 +198,6 @@ public class BankController {
         return "redirect:/admin/index";
     }
 
-    // 1) Форма создания нового сотрудника
     @GetMapping("/{code}/employees/create")
     public String showCreateEmployeeForm(
             @PathVariable("code") String code,
@@ -209,7 +208,7 @@ public class BankController {
         return "employees/create";   // шаблон: src/main/resources/templates/employees/create.html
     }
 
-    // 2) Создание
+
     @PostMapping("/{code}/employees/create")
     public String doCreateEmployee(
             @PathVariable("code") String code,
@@ -220,7 +219,6 @@ public class BankController {
         return "redirect:/admin/index/" + code + "/employees";
     }
 
-    // 3) Форма редактирования
     @GetMapping("/{code}/employees/{id}/edit")
     public String showEditEmployeeForm(
             @PathVariable("code") String code,
@@ -232,7 +230,6 @@ public class BankController {
         return "employees/update";   // шаблон: employees/update.html
     }
 
-    // 4) Обновление
     @PostMapping("/{code}/employees/{id}/edit")
     public String doEditEmployee(
             @PathVariable("code") String code,
@@ -244,7 +241,6 @@ public class BankController {
         return "redirect:/admin/index/" + code + "/employees";
     }
 
-    // 5) Удаление
     @PostMapping("/{code}/employees/{id}/delete")
     public String doDeleteEmployee(
             @PathVariable("code") String code,
@@ -253,7 +249,6 @@ public class BankController {
         return "redirect:/admin/index/" + code + "/employees";
     }
 
-    // 6) Просмотр одного сотрудника (опционально; если нужен)
     @GetMapping("/{code}/employees/{id}")
     public String viewEmployee(
             @PathVariable("code") String code,
@@ -262,7 +257,7 @@ public class BankController {
         model.addAttribute("bankCode", code);
         model.addAttribute("bank", bankService.getById(code));
         model.addAttribute("employee", employeeService.getById(id));
-        return "employees/view";     // шаблон: employees/view.html
+        return "employees/view";
     }
 
     @GetMapping("/{bankCode}/atms/create")

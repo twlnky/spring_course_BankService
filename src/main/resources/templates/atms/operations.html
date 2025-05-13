@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Операции через банкомат</title>
+    <link rel="icon" href="data:,">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f4f4f4;
+            --fg: #333;
+            --card-bg: #ffffff;
+            --accent: #1db954;
+            --accent-hover: #1a7340;
+            --shadow: rgba(0,0,0,0.1);
+            --error: #dc3545;
+            --gradient: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            --transition: 0.3s;
+            --radius: 12px;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            transition: background var(--transition), color var(--transition);
+        }
+        .toggle-theme {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--card-bg);
+            border: none;
+            padding: .5rem;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px var(--shadow);
+            cursor: pointer;
+            transition: transform var(--transition);
+            z-index: 100;
+        }
+        .toggle-theme:hover {
+            transform: rotate(90deg);
+        }
+        .card {
+            background: var(--gradient);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 24px var(--shadow);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card-header {
+            padding: 1.5rem;
+            background: var(--accent);
+            color: #fff;
+            text-align: center;
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+        }
+        .card-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        .card-body {
+            padding: 2rem;
+        }
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem .75rem .25rem;
+            background: transparent;
+            border: 2px solid var(--fg);
+            border-radius: var(--radius);
+            color: var(--fg);
+            font-size: 1rem;
+            transition: border-color var(--transition);
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+        .form-group label {
+            position: absolute;
+            top: 1rem;
+            left: .75rem;
+            color: var(--fg);
+            pointer-events: none;
+            transition: transform var(--transition), font-size var(--transition);
+            background: var(--card-bg);
+            padding: 0 .25rem;
+        }
+        .form-group input:focus + label,
+        .form-group input:not(:placeholder-shown) + label,
+        .form-group select:focus + label,
+        .form-group select:not([value=""]) + label {
+            transform: translateY(-1.5rem) scale(0.85);
+            font-size: 0.85rem;
+            color: var(--accent);
+        }
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            padding: .75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition), transform var(--transition);
+            margin-top: 1rem;
+        }
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        .result-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(29, 185, 84, 0.1);
+            border-left: 4px solid var(--accent);
+            border-radius: var(--radius);
+            animation: fadeIn 0.6s ease;
+        }
+        .error-box {
+            margin: 0.5rem 0;
+            padding: 1rem;
+            background: rgba(220, 53, 69, 0.1);
+            border-left: 4px solid var(--error);
+            border-radius: var(--radius);
+            color: var(--error);
+            animation: fadeIn 0.6s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .error-box::before {
+            content: "❗";
+            font-size: 1.2rem;
+        }
+        .form-group.invalid input,
+        .form-group.invalid select {
+            border-color: var(--error);
+        }
+        .back-button {
+            display: block;
+            margin-top: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<button class="toggle-theme" onclick="toggleTheme()">🌓</button>
+<div class="card">
+    <div class="card-header">
+        <h1>Операции через банкомат</h1>
+    </div>
+    <div class="card-body" th:if="${cards.size() > 0}">
+        <form th:action="@{/atms/operations}" th:object="${operationDto}" method="post">
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('cardId')} ? 'invalid'">
+                <select th:field="*{cardId}" required>
+                    <option th:each="card : ${cards}"
+                            th:value="${card.id}"
+                            th:text="${card.account.accountNumber} + ' / ' + ${#dates.format(card.expirationDate, 'MM/yy')}"></option>
+                </select>
+                <label>Выберите карту</label>
+                <div th:if="${#fields.hasErrors('cardId')}" class="error-box" th:errors="*{cardId}"></div>
+                <p th:unless="${cards != null and !#lists.isEmpty(cards)}">Нет доступных карт.</p>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('amount')} ? 'invalid'">
+                <input type="number"
+                       step="0.01"
+                       min="0"
+                       th:field="*{amount}"
+                       placeholder=" "
+                       required />
+                <label>Сумма</label>
+                <div th:if="${#fields.hasErrors('amount')}" class="error-box" th:errors="*{amount}"></div>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('type')} ? 'invalid'">
+                <select th:field="*{type}" required>
+                    <option value="" disabled selected hidden></option>
+                    <option th:each="t : ${T(rut.miit.tech.web.domain.model.OperationType).values()}"
+                            th:value="${t}"
+                            th:text="${t.getName()}"></option>
+                </select>
+                <label>Тип операции</label>
+                <div th:if="${#fields.hasErrors('type')}" class="error-box" th:errors="*{type}"></div>
+            </div>
+
+            <button type="submit" class="btn">Выполнить</button>
+        </form>
+
+        <div th:if="${hasResult}" class="result-box">
+            <p th:text="${resultMessage}"></p>
+        </div>
+        <div class="back-button">
+            <button onclick="window.location.href='http://localhost:8080/clients'" class="btn">Назад</button>
+        </div>
+    </div>
+
+    <div class="card-body" th:if="${cards.isEmpty()}">
+        <div class="error-box">
+            Нет доступных карт для проведения операций
+        </div>
+        <div class="back-button">
+            <button onclick="window.location.href='http://localhost:8080/clients'" class="btn">Назад</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        html.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+    }
+</script>
+</body>
+</html>

@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findById(Long id);
-    @Query("SELECT Account FROM Card c JOIN Account a ON c.account.id=a.id WHERE c.id=:cardId")
+    @Query("SELECT a FROM Card c JOIN Account a ON c.account.id=a.id WHERE c.id=:cardId")
     Optional<Account> findByCardId(@Param("cardId") Long cardId);
 
     @Modifying

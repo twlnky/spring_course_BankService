@@ -3,11 +3,15 @@ package rut.miit.tech.web.service.operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rut.miit.tech.web.domain.dto.OperationDTO;
 import rut.miit.tech.web.domain.model.Account;
+import rut.miit.tech.web.domain.model.Card;
 import rut.miit.tech.web.domain.model.Operation;
 import rut.miit.tech.web.domain.model.OperationResult;
 import rut.miit.tech.web.repository.OperationRepository;
 import rut.miit.tech.web.service.account.AccountService;
+import rut.miit.tech.web.service.atm.AtmService;
+import rut.miit.tech.web.service.card.CardService;
 import rut.miit.tech.web.service.util.FilterUnit;
 import rut.miit.tech.web.service.util.PageResult;
 import rut.miit.tech.web.service.util.QueryBuilder;
@@ -22,6 +26,9 @@ public class OperationServiceImp implements OperationService {
     private final OperationRepository operationRepository;
     private final QueryBuilder queryBuilder;
     private final AccountService accountService;
+    private final AtmService atmService;
+    private final CardService cardService;
+
 
     @Override
     public Operation getById(Long id) {
@@ -78,4 +85,5 @@ public class OperationServiceImp implements OperationService {
     public void delete(Long id) {
         operationRepository.deleteById(id);
     }
+
 }

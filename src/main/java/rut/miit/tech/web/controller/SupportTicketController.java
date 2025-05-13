@@ -86,7 +86,7 @@ public class SupportTicketController {
         message.setText(ticketDto.getDescription());
         message.setSenderClient(client);
         message.setStatus("true");
-        //supportTicket.setCreatedDate(Date.from(Instant.ofEpochSecond(System.currentTimeMillis())));
+        //supportTicket.setCreatedDate(Date.from(Instant.ofEpochSecond(System.currentTimeMillis()))); Это пиздец полный
 
 
         messageService.create(message);

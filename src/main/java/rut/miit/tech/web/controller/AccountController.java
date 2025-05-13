@@ -12,10 +12,6 @@ import rut.miit.tech.web.service.account.AccountService;
 import rut.miit.tech.web.service.util.Order;
 import rut.miit.tech.web.service.util.PageResult;
 import rut.miit.tech.web.service.util.SortUnit;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
 
 @Controller
@@ -74,7 +70,6 @@ public class AccountController {
         return "clients/account";
     }
 
-    /** Удаление счета */
     @PostMapping("/{id}/delete")
     public String deleteAccount(
             @PathVariable Long id,
